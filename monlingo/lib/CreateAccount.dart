@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:login_flutter/home.dart';
 import 'package:login_flutter/login.dart';
 import 'package:login_flutter/signup.dart';
-//import 'home.dart'; 
+import 'package:lottie/lottie.dart';
+//import 'home.dart';
 //import 'signup.dart';
 
 void main() {
@@ -32,10 +34,7 @@ class startpage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               SizedBox(height: 20),
-              Image.asset(
-                '../assets/profile_image.png',
-                height: 200,
-              ),
+              Lottie.asset("../assets/duo.json", width: 200),
               Spacer(),
               Text(
                 'Time to Create a Profile!',
@@ -56,6 +55,14 @@ class startpage extends StatelessWidget {
               Spacer(flex: 2),
               Column(
                 children: [
+                  ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => HomePage()));
+                      },
+                      child: Text("Home")),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -72,7 +79,7 @@ class startpage extends StatelessWidget {
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
-                        BackgroundColor: Colors.green,
+                        backgroundColor: Colors.green,
                         padding: EdgeInsets.symmetric(vertical: 16),
                       ),
                     ),
