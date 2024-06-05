@@ -44,7 +44,7 @@ class HomePage extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => register()),
                 );
               },
-              child: Text('Create Account'),
+              child: Text('Make a new profile'),
             ),
           ],
         ),
