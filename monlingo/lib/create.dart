@@ -13,12 +13,12 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: ProfileCreationScreen(),
+      home: register(),
     );
   }
 }
 
-class ProfileCreationScreen extends StatelessWidget {
+class register extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,7 +59,7 @@ class ProfileCreationScreen extends StatelessWidget {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => MyWidget()),
+                          MaterialPageRoute(builder: (context) => login()),
                         );
                       },
                       child: Text(
