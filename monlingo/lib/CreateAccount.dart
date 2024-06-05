@@ -33,7 +33,7 @@ class startpage extends StatelessWidget {
             children: [
               SizedBox(height: 20),
               Image.asset(
-                'assets/profile_image.png',
+                '../assets/profile_image.png',
                 height: 200,
               ),
               Spacer(),
@@ -72,7 +72,7 @@ class startpage extends StatelessWidget {
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.green,
+                        BackgroundColor: Colors.green,
                         padding: EdgeInsets.symmetric(vertical: 16),
                       ),
                     ),
