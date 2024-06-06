@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'duo.dart';
 import 'timelapse.dart';
 import 'login.dart';
-
+import 'home.dart';
 class Footer extends StatefulWidget {
   @override
   _FooterState createState() => _FooterState();
@@ -29,7 +29,7 @@ class _FooterState extends State<Footer> {
           _buildFooterButton(
             context,
             icon: Icons.home,
-            destination: Login(),
+            destination: HomePage(),
           ),
           _buildFooterButton(
             context,
