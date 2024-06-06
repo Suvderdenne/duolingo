@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:login_flutter/header_footer.dart';
+
 
 void main() {
   runApp(MyApp());
@@ -21,26 +23,39 @@ class Duo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
   return Scaffold(
+    appBar: AppBar(
+          title: 
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            
+             children: [
+              Spacer(),
+              Padding(
+                padding: const EdgeInsets.only(left: 25.0), // Зүүн талд 40 пикселийн зай нэмнэ
+                child:Row(
+                  children: [
+                    Icon(Icons.favorite, color: Colors.red),
+                    SizedBox(width: 5), // Текст болон дүрс хоорондын зай нэмнэ
+                    Text('5'),
+                  ],
+                ),
+              ),
+             ],
+          ),
+          bottom: PreferredSize(
+            preferredSize: Size.fromHeight(4.0), // LinearProgressIndicator-ийн өндрийг тохируулна
+            child: LinearProgressIndicator(
+              value: 0.5,
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
+              backgroundColor: Colors.grey[200],
+            ),
+          ),
+        ),
       body: Padding(
         padding: EdgeInsets.all(10),
+        child:SingleChildScrollView(
         child: Column(
-          children: [
-               Row(
-                children: [
-                Icon(Icons.close, color: Colors.grey),
-                SizedBox(width: 3),
-                Spacer(),
-                Icon(Icons.favorite, color: Colors.red),
-                Text('5'),
-              ],
-            ),  
-            SizedBox(height: 20),
-            LinearProgressIndicator(
-              value: 0.5,   
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
-            ),
-          
-            SizedBox(height: 30,),
+          children: [              
             Row(
                mainAxisAlignment: MainAxisAlignment.start,
                children: [
@@ -74,8 +89,6 @@ class Duo extends StatelessWidget {
                ],
             ),   
              SizedBox(height: 25,),    
-            Expanded(
-              child:
               Row( 
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [ ElevatedButton(onPressed: () { 
@@ -136,10 +149,11 @@ class Duo extends StatelessWidget {
               )),
               ],
             ),
-            ),      
+                  
             
             SizedBox(height: 20,),
-            Row(
+            
+             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [ ElevatedButton(onPressed: () { 
               }, 
@@ -197,12 +211,11 @@ class Duo extends StatelessWidget {
               )),
               ],
             ),
-
           SizedBox(height: 40,),
            ElevatedButton(onPressed: () {            
           }, 
           style: ElevatedButton.styleFrom(
-            backgroundColor: Color.fromARGB(255, 222, 224, 222),
+            backgroundColor: Color.fromARGB(255, 148, 228, 148),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(5)
             ),
@@ -212,13 +225,14 @@ class Duo extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("CHECK", style: TextStyle(fontSize: 20, color: Color.fromARGB(255, 174, 172, 172)),)
+              Text("CHECK", style: TextStyle(fontSize: 20, color: Color.fromARGB(255, 15, 15, 15)),)
             ],
           ) ),
           ],
         ),
         
-      ),
+      ),),
+      bottomNavigationBar: Footer(),
     );
   }
 }
