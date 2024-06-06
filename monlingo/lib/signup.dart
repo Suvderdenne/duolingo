@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-
+import 'package:lottie/lottie.dart';
 class Signup extends StatefulWidget {
   const Signup({super.key});
 
@@ -34,6 +34,7 @@ class _SignupState extends State<Signup> {
           child: Column(
             children: [
               const SizedBox(height: 100),
+              Lottie.asset("../assets/register.json", width: 200),
               Text(
                 "Register",
                 style: Theme.of(context).textTheme.headlineLarge,
