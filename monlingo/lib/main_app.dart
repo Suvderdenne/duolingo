@@ -11,7 +11,7 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData.from(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Color.fromARGB(255, 9, 255, 0),
+          seedColor: Color.fromARGB(255, 145, 255, 142),
         ),
       ),
       home: startpage(),
