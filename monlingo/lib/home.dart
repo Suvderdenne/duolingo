@@ -250,11 +250,6 @@ class HomePage extends StatelessWidget {
                 ],
               ),
             ),
-            Container(
-              width: double.infinity,
-              height: 1,
-              color: const Color.fromARGB(255, 104, 103, 103),
-            ),
           ],
         ),
       ),
