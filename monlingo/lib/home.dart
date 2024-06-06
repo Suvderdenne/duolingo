@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:login_flutter/duo.dart';
 import 'package:login_flutter/timelapse.dart';
 import './login.dart';
 
@@ -305,7 +306,7 @@ class HomePage extends StatelessWidget {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => Login()),
+                          MaterialPageRoute(builder: (context) => Duo()),
                         );
                       },
                       child: Container(
