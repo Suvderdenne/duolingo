@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:login_flutter/timelapse.dart';
 import './login.dart';
+
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -270,8 +272,7 @@ class HomePage extends StatelessWidget {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                              builder: (context) => Login()),
+                          MaterialPageRoute(builder: (context) => Login()),
                         );
                       },
                       child: Container(
@@ -304,8 +305,7 @@ class HomePage extends StatelessWidget {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                              builder: (context) => Login()),
+                          MaterialPageRoute(builder: (context) => Login()),
                         );
                       },
                       child: Container(
@@ -338,8 +338,7 @@ class HomePage extends StatelessWidget {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                              builder: (context) => Login()),
+                          MaterialPageRoute(builder: (context) => Login()),
                         );
                       },
                       child: Container(
@@ -372,8 +371,7 @@ class HomePage extends StatelessWidget {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                              builder: (context) => Login()),
+                          MaterialPageRoute(builder: (context) => Duolingo()),
                         );
                       },
                       child: Container(
@@ -406,8 +404,7 @@ class HomePage extends StatelessWidget {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                              builder: (context) => Login()),
+                          MaterialPageRoute(builder: (context) => Login()),
                         );
                       },
                       child: Container(
