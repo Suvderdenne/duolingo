@@ -211,7 +211,7 @@ class Duo extends StatelessWidget {
               )),
               ],
             ),
-          SizedBox(height: 40,),
+          SizedBox(height: 60,),
            ElevatedButton(onPressed: () {            
           }, 
           style: ElevatedButton.styleFrom(
