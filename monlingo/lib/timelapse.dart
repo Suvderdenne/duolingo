@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart'; // For formatting date and time
 import 'header_footer.dart';
+
 class Duolingo extends StatefulWidget {
   const Duolingo({super.key});
 
