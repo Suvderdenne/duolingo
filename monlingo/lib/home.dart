@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:login_flutter/start.dart';
 import 'header_footer.dart';
 import 'duo.dart';
 import 'timelapse.dart';
@@ -100,7 +101,11 @@ class HomePage extends StatelessWidget {
                             ElevatedButton(
                               onPressed: () {
                                 OverlayMessage.show(context, 'Your message here');
-                              },
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => Start()),
+                                  );
+                                  },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.purple,
                               ),
