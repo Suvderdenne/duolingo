@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:login_flutter/Pages/profile.dart';
 import 'package:login_flutter/start.dart';
 import 'header_footer.dart';
 import 'duo.dart';
@@ -34,7 +35,8 @@ class HomePage extends StatelessWidget {
                       SizedBox(width: 20),
                       Column(
                         children: [
-                          Icon(Icons.local_fire_department, color: Colors.orange),
+                          Icon(Icons.local_fire_department,
+                              color: Colors.orange),
                           Text('1', style: TextStyle(color: Colors.orange)),
                         ],
                       ),
@@ -66,7 +68,8 @@ class HomePage extends StatelessWidget {
                         CircularProgressIndicator(
                           value: 0.80,
                           strokeWidth: 100,
-                          valueColor: const AlwaysStoppedAnimation<Color>(Color.fromARGB(255, 122, 255, 82)),
+                          valueColor: const AlwaysStoppedAnimation<Color>(
+                              Color.fromARGB(255, 122, 255, 82)),
                           backgroundColor: Colors.grey.shade300,
                         ),
                         ClipRRect(
@@ -81,7 +84,8 @@ class HomePage extends StatelessWidget {
                     const SizedBox(height: 30),
                     const Text(
                       'Intro',
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                     Card(
                       color: Colors.purple.shade100,
@@ -91,7 +95,8 @@ class HomePage extends StatelessWidget {
                           children: [
                             const Text(
                               'Level 0',
-                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
                             ),
                             const Text(
                               'Lesson 2 / 3',
@@ -100,16 +105,19 @@ class HomePage extends StatelessWidget {
                             const SizedBox(height: 10),
                             ElevatedButton(
                               onPressed: () {
-                                OverlayMessage.show(context, 'Your message here');
+                                OverlayMessage.show(
+                                    context, 'Your message here');
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => Start()),
-                                  );
-                                  },
+                                  MaterialPageRoute(
+                                      builder: (context) => Profile()),
+                                );
+                              },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.purple,
                               ),
-                              child: const Text('START', style: TextStyle(color: Colors.white)),
+                              child: const Text('ddd',
+                                  style: TextStyle(color: Colors.white)),
                             ),
                           ],
                         ),
