@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:login_flutter/start.dart';
 import 'header_footer.dart';
+import 'Profile.dart';
 import 'duo.dart';
 import 'timelapse.dart';
 import 'login.dart';
