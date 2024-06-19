@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:login_flutter/CreateAccount.dart';
+import 'package:login_flutter/IntroScreens.dart';
 
 //import 'CreateAccount.dart';
 
@@ -14,7 +15,7 @@ class MainApp extends StatelessWidget {
           seedColor: Color.fromARGB(255, 145, 255, 142),
         ),
       ),
-      home: startpage(),
+      home: IntroScreens(),
     );
   }
 }

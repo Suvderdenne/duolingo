@@ -14,6 +14,7 @@ dependencies:
   lottie: ^3.1.2
   intl: ^0.17.0
   http: ^1.2.0
+  carousel_slider: ^4.2.1
 
 dev_dependencies:
   flutter_test:
@@ -24,4 +25,7 @@ flutter:
   assets:
     - assets/logo.png
     - assets/banner.webp
+    - assets/Intro/start.json
+    - assets/Intro/start2.json
+    - assets/Intro/start3.json
   uses-material-design: true
