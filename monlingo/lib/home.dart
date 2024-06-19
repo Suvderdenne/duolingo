@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:login_flutter/Pages/profile.dart';
 import 'package:login_flutter/start.dart';
 import 'header_footer.dart';
 import 'duo.dart';
