@@ -14,12 +14,6 @@ class _StartState extends State<Start> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 245, 222, 229),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.home),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: Stack(
         children: [
@@ -38,22 +32,22 @@ class _StartState extends State<Start> {
           Positioned(
             top: 280,
             left: 110,
-            child: UnitWidget(imagePath: '../assets/start/1.png', title: '2', stars: 1, isLocked: false),
+            child: UnitWidget(imagePath: '../assets/start/1.png', title: '2', stars: 0, isLocked: false),
           ),
           Positioned(
             top: 210,
             left: 200,
-            child: UnitWidget(imagePath: '../assets/start/1.png', title: '3', stars: 2, isLocked: false),
+            child: UnitWidget(imagePath: '../assets/start/1.png', title: '3', stars: 0, isLocked: true),
           ),
           Positioned(
             top: 150,
             left: 280,
-            child: UnitWidget(imagePath: '../assets/start/1.png', title: '4', stars: 3, isLocked: false),
+            child: UnitWidget(imagePath: '../assets/start/1.png', title: '4', stars: 0, isLocked: true),
           ),
           Positioned(
             top: 140,
             left: 380,
-            child: UnitWidget(imagePath: '../assets/start/1.png', title: '5', stars: 2, isLocked: false),
+            child: UnitWidget(imagePath: '../assets/start/1.png', title: '5', stars: 0, isLocked: true),
           ),
           Positioned(
             top: 90,
