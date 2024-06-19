@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class Start extends StatefulWidget {
   const Start({super.key});
 
@@ -25,12 +24,12 @@ class _StartState extends State<Start> {
           ),
           // Overlaying UnitWidgets
           Positioned(
-            top: 370,
-            left: 30,
+            top: 420,
+            left: 50,
             child: UnitWidget(imagePath: '../assets/start/1.png', title: '1', stars: 3, isLocked: false),
           ),
           Positioned(
-            top: 280,
+            top: 260,
             left: 110,
             child: UnitWidget(imagePath: '../assets/start/1.png', title: '2', stars: 0, isLocked: false),
           ),
