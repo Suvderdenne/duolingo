@@ -1,61 +1,97 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:login_flutter/CreateAccount.dart';
 import 'package:lottie/lottie.dart';
-import 'signup.dart';
+import 'home.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class Login extends StatefulWidget {
-  const Login({
-    Key? key,
-  }) : super(key: key);
-
+  const Login({super.key});
   @override
-  State<Login> createState() => _LoginState();
+  _LoginState createState() => _LoginState();
 }
 
 class _LoginState extends State<Login> {
-  final GlobalKey<FormState> _formKey = GlobalKey();
-
-  final FocusNode _focusNodePassword = FocusNode();
-  final TextEditingController _controllerUsername = TextEditingController();
-  final TextEditingController _controllerPassword = TextEditingController();
-
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   bool _obscurePassword = true;
-  final Box _boxLogin = Hive.box("login");
-  final Box _boxAccounts = Hive.box("accounts");
+
+  void sendJson() async {
+    final url = Uri.parse('http://127.0.0.1:8001/users/');
+
+    final Map<String, dynamic> jsonMap = {
+      'action': 'login',
+      'email': emailController.text,
+      'passw': passwordController.text,
+    };
+
+    try {
+      final String jsonString = json.encode(jsonMap);
+      print('JSON to send: $jsonString');
+
+      final response = await http.post(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonString,
+      );
+
+      if (response.statusCode == 200) {
+        print('Success: ${response.body}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('User registered successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        ); 
+      } else {
+        print('Failed with status code: ${response.statusCode}');
+        print('Failed with error: ${response.reasonPhrase}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to register user.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      print('Error sending JSON: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    if (_boxLogin.get("loginStatus") ?? false) {
-      return startpage();
-    }
-
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       body: Form(
-        key: _formKey,
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(30.0),
+          padding: const EdgeInsets.symmetric(horizontal: 30.0),
           child: Column(
             children: [
-              const SizedBox(height: 150),
+              const SizedBox(height: 100),
               Lottie.asset("../assets/register.json", width: 200),
               Text(
-                "Welcome back",
+                "Login",
                 style: Theme.of(context).textTheme.headlineLarge,
               ),
-              const SizedBox(height: 10),
-              Text(
-                "Login to your account",
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(height: 60),
+              const SizedBox(height: 35),
               TextFormField(
-                controller: _controllerUsername,
-                keyboardType: TextInputType.name,
+                controller: emailController,
+                keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
-                  labelText: "Username",
-                  prefixIcon: const Icon(Icons.person_outline),
+                  labelText: "Email",
+                  prefixIcon: const Icon(Icons.email_outlined),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -63,35 +99,26 @@ class _LoginState extends State<Login> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                onEditingComplete: () => _focusNodePassword.requestFocus(),
-                validator: (String? value) {
-                  if (value == null || value.isEmpty) {
-                    return "Please enter username.";
-                  } else if (!_boxAccounts.containsKey(value)) {
-                    return "Username is not registered.";
-                  }
-
-                  return null;
-                },
               ),
               const SizedBox(height: 10),
               TextFormField(
-                controller: _controllerPassword,
-                focusNode: _focusNodePassword,
-                obscureText: _obscurePassword,
+                controller: passwordController,
                 keyboardType: TextInputType.visiblePassword,
+                obscureText:
+                    _obscurePassword, 
                 decoration: InputDecoration(
                   labelText: "Password",
                   prefixIcon: const Icon(Icons.password_outlined),
                   suffixIcon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          _obscurePassword = !_obscurePassword;
-                        });
-                      },
-                      icon: _obscurePassword
-                          ? const Icon(Icons.visibility_outlined)
-                          : const Icon(Icons.visibility_off_outlined)),
+                    onPressed: () {
+                      setState(() {
+                        _obscurePassword = !_obscurePassword;
+                      });
+                    },
+                    icon: _obscurePassword
+                        ? const Icon(Icons.visibility_outlined)
+                        : const Icon(Icons.visibility_off_outlined),
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -99,62 +126,22 @@ class _LoginState extends State<Login> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                validator: (String? value) {
-                  if (value == null || value.isEmpty) {
-                    return "Please enter password.";
-                  } else if (value !=
-                      _boxAccounts.get(_controllerUsername.text)) {
-                    return "Wrong password.";
-                  }
-
-                  return null;
-                },
               ),
-              const SizedBox(height: 60),
+              const SizedBox(height: 10),
+              const SizedBox(height: 50),
               Column(
                 children: [
                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size.fromHeight(50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    onPressed: () {
-                      if (_formKey.currentState?.validate() ?? false) {
-                        _boxLogin.put("loginStatus", true);
-                        _boxLogin.put("userName", _controllerUsername.text);
-
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return startpage();
-                            },
-                          ),
-                        );
-                      }
-                    },
-                    child: const Text("Login"),
+                    onPressed: sendJson,
+                    child: Text('Login'),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text("Don't have an account?"),
+                      const Text("Don't have account?"),
                       TextButton(
-                        onPressed: () {
-                          _formKey.currentState?.reset();
-
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) {
-                                return const Signup();
-                              },
-                            ),
-                          );
-                        },
-                        child: const Text("Signup"),
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text("Register"),
                       ),
                     ],
                   ),
@@ -165,13 +152,5 @@ class _LoginState extends State<Login> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _focusNodePassword.dispose();
-    _controllerUsername.dispose();
-    _controllerPassword.dispose();
-    super.dispose();
   }
 }
