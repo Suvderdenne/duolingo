@@ -105,18 +105,16 @@ class HomePage extends StatelessWidget {
                             const SizedBox(height: 10),
                             ElevatedButton(
                               onPressed: () {
-                                OverlayMessage.show(
-                                    context, 'Your message here');
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => Profile()),
+                                      builder: (context) => Start()),
                                 );
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.purple,
                               ),
-                              child: const Text('ddd',
+                              child: const Text('Start',
                                   style: TextStyle(color: Colors.white)),
                             ),
                           ],
