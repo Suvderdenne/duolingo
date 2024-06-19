@@ -3,14 +3,13 @@ import 'duo.dart';
 import 'timelapse.dart';
 import 'login.dart';
 import 'home.dart';
-
+import 'Profile.dart';
 class Footer extends StatefulWidget {
   @override
   _FooterState createState() => _FooterState();
 }
 
 class _FooterState extends State<Footer> {
-  // Variable to keep track of whether a button is pressed
   Map<IconData, bool> _buttonPressed = {
     Icons.person_outlined: false,
     Icons.shop: false,
@@ -30,7 +29,7 @@ class _FooterState extends State<Footer> {
           _buildFooterButton(
             context,
             icon: Icons.person_outlined,
-            destination: Login(),
+            destination: ProfilePage(),
           ),
           _buildFooterButton(
             context,
