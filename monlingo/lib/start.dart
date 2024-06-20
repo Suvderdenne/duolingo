@@ -48,16 +48,16 @@ class _StartState extends State<Start> {
             left: 380,
             child: UnitWidget(imagePath: '../assets/start/1.png', title: '5', stars: 0, isLocked: true),
           ),
-          Positioned(
-            top: 90,
-            left: 470,
-            child: UnitWidget(imagePath: '../assets/start/1.png', title: '6', stars: 0, isLocked: true),
-          ),
-          Positioned(
-            top: 20,
-            left: 560,
-            child: UnitWidget(imagePath: '../assets/start/1.png', title: '7', stars: 0, isLocked: true),
-          ),
+          // Positioned(
+          //   top: 90,
+          //   left: 470,
+          //   child: UnitWidget(imagePath: '../assets/start/1.png', title: '6', stars: 0, isLocked: true),
+          // ),
+          // Positioned(
+          //   top: 20,
+          //   left: 560,
+          //   child: UnitWidget(imagePath: '../assets/start/1.png', title: '7', stars: 0, isLocked: true),
+          // ),
         ],
       ),
     );
