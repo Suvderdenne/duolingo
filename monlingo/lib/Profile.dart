@@ -14,7 +14,11 @@ class _ProfilePageState extends State<ProfilePage> {
   String? email;
   String? firstname;
   String? lastname;
-
+  final imageUrl =
+      'https://img.freepik.com/premium-vector/man-avatar-profile-picture-vector-illustration_268834-538.jpg';
+final Color startColor = Colors.blue;
+  final Color endColor = Colors.green;
+  @override
   @override
   void initState() {
     super.initState();
@@ -26,7 +30,6 @@ class _ProfilePageState extends State<ProfilePage> {
     setState(() {
       email = prefs.getString('email');
       firstname = prefs.getString('firstname');
-      lastname = prefs.getString('lastname');
     });
   }
 
@@ -35,28 +38,38 @@ class _ProfilePageState extends State<ProfilePage> {
     await prefs.clear(); // Clear all saved data
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => Login()), // Navigate to login page
+      MaterialPageRoute(
+          builder: (context) => Login()), // Navigate to login page
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [startColor, endColor],
+              stops: [0.0, 1.0],
+            ),
+          ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(
+              height: 50,
+            ),
             Center(
               child: CircleAvatar(
-                radius: 50,
-                backgroundImage: AssetImage('assets/profile_image.png'), // Replace with your image path
+                radius: 100,
+                backgroundImage: Image.network(imageUrl).image,
               ),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 10),
             _buildTextWithShadow('Email:', email ?? ''),
             _buildTextWithShadow('First Name:', firstname ?? ''),
-            _buildTextWithShadow('Last Name:', lastname ?? ''),
           ],
         ),
       ),
@@ -82,7 +95,8 @@ class _ProfilePageState extends State<ProfilePage> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8.0),
         border: Border(
-              bottom: BorderSide(width: 1.5, color: Colors.grey),),
+          bottom: BorderSide(width: 3, color: Colors.white),
+        ),
       ),
       padding: EdgeInsets.all(12.0),
       child: Column(
@@ -95,7 +109,9 @@ class _ProfilePageState extends State<ProfilePage> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(width: MediaQuery.of(context).size.width,),
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+          ),
           Text(
             text,
             style: TextStyle(
