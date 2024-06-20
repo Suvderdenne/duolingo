@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'home.dart';
+import 'Profile.dart';
+import 'signup.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
+
   @override
   _LoginState createState() => _LoginState();
 }
@@ -14,9 +18,15 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
   bool _obscurePassword = true;
+  bool _isLoading = false;
 
   void sendJson() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
     final url = Uri.parse('http://127.0.0.1:8001/users/');
 
     final Map<String, dynamic> jsonMap = {
@@ -24,6 +34,10 @@ class _LoginState extends State<Login> {
       'email': emailController.text,
       'passw': passwordController.text,
     };
+
+    setState(() {
+      _isLoading = true;
+    });
 
     try {
       final String jsonString = json.encode(jsonMap);
@@ -39,22 +53,30 @@ class _LoginState extends State<Login> {
 
       if (response.statusCode == 200) {
         print('Success: ${response.body}');
+        final responseData = json.decode(response.body);
+
+        // Save user data to shared preferences
+        final prefs = await SharedPreferences.getInstance();
+        prefs.setString('email', responseData['data'][0]['email']);
+        prefs.setString('firstname', responseData['data'][0]['firstname']);
+        prefs.setString('lastname', responseData['data'][0]['lastname']);
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('User registered successfully!'),
+            content: Text('User logged in successfully!'),
             backgroundColor: Colors.green,
           ),
         );
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
-        ); 
+          MaterialPageRoute(builder: (context) => ProfilePage()),
+        );
       } else {
         print('Failed with status code: ${response.statusCode}');
         print('Failed with error: ${response.reasonPhrase}');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to register user.'),
+            content: Text('Failed to login.'),
             backgroundColor: Colors.red,
           ),
         );
@@ -67,6 +89,10 @@ class _LoginState extends State<Login> {
           backgroundColor: Colors.red,
         ),
       );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -75,6 +101,7 @@ class _LoginState extends State<Login> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       body: Form(
+        key: _formKey,
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 30.0),
           child: Column(
@@ -99,13 +126,21 @@ class _LoginState extends State<Login> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your email';
+                  }
+                  if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                    return 'Please enter a valid email';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 10),
               TextFormField(
                 controller: passwordController,
                 keyboardType: TextInputType.visiblePassword,
-                obscureText:
-                    _obscurePassword, 
+                obscureText: _obscurePassword,
                 decoration: InputDecoration(
                   labelText: "Password",
                   prefixIcon: const Icon(Icons.password_outlined),
@@ -126,27 +161,35 @@ class _LoginState extends State<Login> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your password';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 10),
               const SizedBox(height: 50),
-              Column(
-                children: [
-                  ElevatedButton(
-                    onPressed: sendJson,
-                    child: Text('Login'),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text("Don't have account?"),
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text("Register"),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+              _isLoading
+                  ? CircularProgressIndicator()
+                  : Column(
+                      children: [
+                        ElevatedButton(
+                          onPressed: sendJson,
+                          child: Text('Login'),
+                        ),
+                        const SizedBox(height: 30,),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => Signup()),
+                            );
+                          },
+                          child: Text("Register"),
+                        ),
+                      ],
+                    ),
             ],
           ),
         ),

@@ -1,73 +1,110 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'header_footer.dart';
+import 'login.dart'; // Assuming your login page file is named 'login.dart'
 
+class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
 
+  @override
+  _ProfilePageState createState() => _ProfilePageState();
+}
 
-class ProfilePage extends StatelessWidget {
+class _ProfilePageState extends State<ProfilePage> {
+  String? email;
+  String? firstname;
+  String? lastname;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  _loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      email = prefs.getString('email');
+      firstname = prefs.getString('firstname');
+      lastname = prefs.getString('lastname');
+    });
+  }
+
+  _logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear(); // Clear all saved data
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => Login()), // Navigate to login page
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {},
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.more_vert),
-            onPressed: () {},
-          ),
-        ],
-      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CircleAvatar(
-              radius: 40,
-              backgroundImage: NetworkImage('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOuxrvcNMfGLh73uKP1QqYpKoCB0JLXiBMvA&s'), // Replace with actual image URL or asset
-            ),
-            SizedBox(height: 16),
             Text(
-              'David Robinson',
+              'Email:',
               style: TextStyle(
-                fontSize: 24,
+                fontSize: 18.0,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 4),
             Text(
-              'Joined 1 year ago',
+              '$email',
               style: TextStyle(
-                color: Colors.grey,
+                fontSize: 16.0,
               ),
             ),
-            SizedBox(height: 32),
-            ListTile(
-              leading: Icon(Icons.person),
-              title: Text('Manage user'),
-              trailing: Icon(Icons.chevron_right),
-              onTap: () {},
+            SizedBox(height: 10), // Add some spacing between texts
+            Text(
+              'First Name:',
+              style: TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            ListTile(
-              leading: Icon(Icons.notifications),
-              title: Text('Notifications'),
-              trailing: Icon(Icons.chevron_right),
-              onTap: () {},
+            Text(
+              '$firstname',
+              style: TextStyle(
+                fontSize: 16.0,
+              ),
             ),
-            ListTile(
-              leading: Icon(Icons.dark_mode),
-              title: Text('Dark Mode'),
-              trailing: Icon(Icons.chevron_right),
-              onTap: () {},
+            SizedBox(height: 10), // Add some spacing between texts
+            Text(
+              'Last Name:',
+              style: TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            Spacer(),
-            ElevatedButton(
-              onPressed: () {},
-              child: Text('Sign Out'),
+            Text(
+              '$lastname',
+              style: TextStyle(
+                fontSize: 16.0,
+              ),
             ),
+            
+              SizedBox(width: 16.0),
+            TextButton(
+                onPressed: _logout,
+                child: Text(
+                  'Logout',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    color: Colors.red,
+                  ),
+                ),
+              ),
           ],
         ),
       ),
+      
+      bottomNavigationBar: Footer(),
     );
   }
 }
