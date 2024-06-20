@@ -4,7 +4,7 @@ import 'header_footer.dart';
 import 'login.dart'; // Assuming your login page file is named 'login.dart'
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+  const ProfilePage({Key? key}) : super(key: key);
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -47,64 +47,64 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Email:',
-              style: TextStyle(
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
+            Center(
+              child: CircleAvatar(
+                radius: 50,
+                backgroundImage: AssetImage('assets/profile_image.png'), // Replace with your image path
               ),
             ),
-            Text(
-              '$email',
-              style: TextStyle(
-                fontSize: 16.0,
-              ),
-            ),
-            SizedBox(height: 10), // Add some spacing between texts
-            Text(
-              'First Name:',
-              style: TextStyle(
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              '$firstname',
-              style: TextStyle(
-                fontSize: 16.0,
-              ),
-            ),
-            SizedBox(height: 10), // Add some spacing between texts
-            Text(
-              'Last Name:',
-              style: TextStyle(
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              '$lastname',
-              style: TextStyle(
-                fontSize: 16.0,
-              ),
-            ),
-            
-              SizedBox(width: 16.0),
-            TextButton(
-                onPressed: _logout,
-                child: Text(
-                  'Logout',
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    color: Colors.red,
-                  ),
-                ),
-              ),
+            SizedBox(height: 20),
+            _buildTextWithShadow('Email:', email ?? ''),
+            _buildTextWithShadow('First Name:', firstname ?? ''),
+            _buildTextWithShadow('Last Name:', lastname ?? ''),
           ],
         ),
       ),
-      
       bottomNavigationBar: Footer(),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _logout,
+        label: Text(
+          'Logout',
+          style: TextStyle(
+            fontSize: 16.0,
+            color: Colors.white,
+          ),
+        ),
+        icon: Icon(Icons.logout, color: Colors.white),
+        backgroundColor: Colors.red,
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
+  }
+
+  Widget _buildTextWithShadow(String label, String text) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8.0),
+        border: Border(
+              bottom: BorderSide(width: 1.5, color: Colors.grey),),
+      ),
+      padding: EdgeInsets.all(12.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 18.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(width: MediaQuery.of(context).size.width,),
+          Text(
+            text,
+            style: TextStyle(
+              fontSize: 16.0,
+              color: Colors.blue,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
