@@ -229,3 +229,4 @@ def dt_progress(request):
     resp = sendResponse(request, 1002, data, action)  
 
     return resp
+

@@ -59,7 +59,6 @@ class _LoginState extends State<Login> {
         final prefs = await SharedPreferences.getInstance();
         prefs.setString('email', responseData['data'][0]['email']);
         prefs.setString('firstname', responseData['data'][0]['firstname']);
-        prefs.setString('lastname', responseData['data'][0]['lastname']);
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
