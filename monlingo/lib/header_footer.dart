@@ -4,6 +4,7 @@ import 'timelapse.dart';
 import 'login.dart';
 import 'home.dart';
 import 'Profile.dart';
+
 class Footer extends StatefulWidget {
   @override
   _FooterState createState() => _FooterState();
@@ -22,7 +23,7 @@ class _FooterState extends State<Footer> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
-      color: Colors.white,
+      color: Color.fromARGB(255, 81, 255, 148),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
@@ -80,9 +81,10 @@ class _FooterState extends State<Footer> {
         onTapUp: (_) {
           _updateButtonColor(icon, false);
         },
-        child: Container(
-          width: 56,
-          height: 56,
+        child: AnimatedContainer(
+          duration: Duration(milliseconds: 300),
+          width: isPressed ? 66 : 56,
+          height: isPressed ? 66 : 56,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: isPressed ? Colors.blue : Colors.white,
@@ -97,7 +99,7 @@ class _FooterState extends State<Footer> {
           ),
           child: Icon(
             icon,
-            color: Colors.red,
+            color: isPressed ? Colors.white : Colors.purple,
           ),
         ),
       ),
