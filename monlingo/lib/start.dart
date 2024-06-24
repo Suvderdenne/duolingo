@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:login_flutter/timelapse.dart';
 import 'package:lottie/lottie.dart';
 
 void main() {
@@ -74,9 +75,14 @@ class _StartState extends State<Start> {
           Positioned(
             top: 550,
             left: 180,
-            child: LevelWidget(level: 1, stars: 3, isLocked: false),
-          ),
-          // Add more levels as needed
+             child: InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Duolingo()), 
+                  );},
+                  child: LevelWidget(level: 1, stars: 3, isLocked: false),
+                  ),),
         ],
       ),
     );
