@@ -1,4 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: const Start(),
+    );
+  }
+}
 
 class Start extends StatefulWidget {
   const Start({super.key});
@@ -12,67 +32,67 @@ class _StartState extends State<Start> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 245, 222, 229),
+        backgroundColor: const Color.fromARGB(255, 245, 222, 229),
       ),
       body: Stack(
         children: [
+          // Background image
           Positioned.fill(
             child: Image.asset(
-              '../assets/start/image.png',
-              fit: BoxFit.cover,
+              '../assets/start/back.png',
+              fit: BoxFit.fill,
             ),
           ),
-          // Overlaying UnitWidgets
           Positioned(
-            top: 420,
-            left: 50,
-            child: UnitWidget(imagePath: '../assets/start/1.png', title: '1', stars: 3, isLocked: false),
+            left: 20,
+            bottom: 100,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20.0), // Radius value
+              child: Lottie.asset(
+                '../assets/start/neg.json',
+                width: 100,
+              ),
+            ),
           ),
           Positioned(
-            top: 260,
-            left: 110,
-            child: UnitWidget(imagePath: '../assets/start/1.png', title: '2', stars: 0, isLocked: false),
-          ),
-          Positioned(
-            top: 210,
+            top: 100,
             left: 200,
-            child: UnitWidget(imagePath: '../assets/start/1.png', title: '3', stars: 0, isLocked: true),
+            child: LevelWidget(level: 5, stars: 0, isLocked: true),
           ),
           Positioned(
-            top: 150,
-            left: 280,
-            child: UnitWidget(imagePath: '../assets/start/1.png', title: '4', stars: 0, isLocked: true),
+            top: 200,
+            left: 150,
+            child: LevelWidget(level: 4, stars: 0, isLocked: true),
           ),
           Positioned(
-            top: 140,
-            left: 380,
-            child: UnitWidget(imagePath: '../assets/start/1.png', title: '5', stars: 0, isLocked: true),
+            top: 280,
+            left: 220,
+            child: LevelWidget(level: 3, stars: 0, isLocked: true),
           ),
-          // Positioned(
-          //   top: 90,
-          //   left: 470,
-          //   child: UnitWidget(imagePath: '../assets/start/1.png', title: '6', stars: 0, isLocked: true),
-          // ),
-          // Positioned(
-          //   top: 20,
-          //   left: 560,
-          //   child: UnitWidget(imagePath: '../assets/start/1.png', title: '7', stars: 0, isLocked: true),
-          // ),
+          Positioned(
+            top: 350,
+            left: 120,
+            child: LevelWidget(level: 2, stars: 0, isLocked: true),
+          ),
+          Positioned(
+            top: 430,
+            left: 180,
+            child: LevelWidget(level: 1, stars: 3, isLocked: false),
+          ),
+          // Add more levels as needed
         ],
       ),
     );
   }
 }
 
-class UnitWidget extends StatelessWidget {
-  final String imagePath;
-  final String title;
+class LevelWidget extends StatelessWidget {
+  final int level;
   final int stars;
   final bool isLocked;
 
-  const UnitWidget({
-    required this.imagePath,
-    required this.title,
+  const LevelWidget({
+    required this.level,
     required this.stars,
     required this.isLocked,
     super.key,
@@ -80,49 +100,53 @@ class UnitWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
+    return GestureDetector(
+      onTap: isLocked ? null : () => print("Level $level tapped"),
+      child: Column(
+        children: [
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(30.0),
+                child:  
+                Image.asset(
+                '../assets/start/number1.png',
+                width: 50,
+                height: 50,
+              ),
+              ),
+              if (!isLocked)
+                Text(
+                  level.toString(),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromARGB(255, 253, 253, 253)
+                  ),
+                ),
+              if (isLocked)
+                const Icon(
+                  Icons.lock,
+                  size: 24,
+                  color: Colors.white,
+                ),
+            ],
           ),
-        ),
-        SizedBox(height: 4),
-        if (isLocked)
-          Icon(
-            Icons.lock,
-            size: 50,
-            color: Colors.grey,
-          )
-        else
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(
-              stars,
-              (index) => Icon(
-                Icons.star,
-                size: 20,
-                color: Colors.yellow,
+          if (!isLocked)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(
+                stars,
+                (index) => const Icon(
+                  Icons.star,
+                  size: 16,
+                  color: Colors.yellow,
+                ),
               ),
             ),
-          ),
-        SizedBox(height: 4),
-        Container(
-          decoration: BoxDecoration(
-            color: isLocked ? Colors.grey[300] : Colors.orange,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          padding: const EdgeInsets.all(8.0),
-          child: Image.asset(
-            imagePath,
-            width: 50,
-            height: 50,
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
