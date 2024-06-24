@@ -4,6 +4,7 @@ import 'package:lottie/lottie.dart';
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+
 class Signup extends StatefulWidget {
   const Signup({super.key});
   @override
@@ -11,21 +12,18 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
-  
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController firstnameController = TextEditingController();
   final TextEditingController lastnameController = TextEditingController();
-final TextEditingController passworrepaetdController = TextEditingController();
+  final TextEditingController passworrepaetdController =
+      TextEditingController();
   bool _obscurePassword = true;
-bool _obscurePasswordRepeat = true;
+  bool _obscurePasswordRepeat = true;
 
   void sendJson() async {
-    
     final url = Uri.parse('http://127.0.0.1:8001/users/');
 
-
-    
     final Map<String, dynamic> jsonMap = {
       'action': 'register',
       'email': emailController.text,
@@ -35,11 +33,9 @@ bool _obscurePasswordRepeat = true;
     };
 
     try {
-      
       final String jsonString = json.encode(jsonMap);
       print('JSON to send: $jsonString');
 
-      
       final response = await http.post(
         url,
         headers: <String, String>{
@@ -48,7 +44,6 @@ bool _obscurePasswordRepeat = true;
         body: jsonString,
       );
 
-      
       if (response.statusCode == 200) {
         print('Success: ${response.body}');
         ScaffoldMessenger.of(context).showSnackBar(
@@ -130,65 +125,66 @@ bool _obscurePasswordRepeat = true;
               ),
               const SizedBox(height: 10),
               TextFormField(
-  controller: passwordController,
-  keyboardType: TextInputType.visiblePassword,
-  obscureText: _obscurePassword, // Use obscureText instead of managing state manually
-  decoration: InputDecoration(
-    labelText: "Password",
-    prefixIcon: const Icon(Icons.password_outlined),
-    suffixIcon: IconButton(
-      onPressed: () {
-        setState(() {
-          _obscurePassword = !_obscurePassword;
-        });
-      },
-      icon: _obscurePassword
-          ? const Icon(Icons.visibility_outlined)
-          : const Icon(Icons.visibility_off_outlined),
-    ),
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10),
-    ),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10),
-    ),
-  ),
-),
-const SizedBox(height: 10),
-TextFormField(
-  controller: passworrepaetdController,
-  keyboardType: TextInputType.visiblePassword,
-  obscureText: _obscurePasswordRepeat, // Separate state for this field
-  decoration: InputDecoration(
-    labelText: "Repeat Password",
-    prefixIcon: const Icon(Icons.password_outlined),
-    suffixIcon: IconButton(
-      onPressed: () {
-        setState(() {
-          _obscurePasswordRepeat = !_obscurePasswordRepeat;
-        });
-      },
-      icon: _obscurePasswordRepeat
-          ? const Icon(Icons.visibility_outlined)
-          : const Icon(Icons.visibility_off_outlined),
-    ),
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10),
-    ),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10),
-    ),
-  ),
-  validator: (String? value) {
-    if (value == null || value.isEmpty) {
-      return "Please enter password.";
-    } else if (value != passwordController.text) {
-      return "Password doesn't match.";
-    }
-    return null;
-  },
-),
-
+                controller: passwordController,
+                keyboardType: TextInputType.visiblePassword,
+                obscureText:
+                    _obscurePassword, // Use obscureText instead of managing state manually
+                decoration: InputDecoration(
+                  labelText: "Password",
+                  prefixIcon: const Icon(Icons.password_outlined),
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        _obscurePassword = !_obscurePassword;
+                      });
+                    },
+                    icon: _obscurePassword
+                        ? const Icon(Icons.visibility_outlined)
+                        : const Icon(Icons.visibility_off_outlined),
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextFormField(
+                controller: passworrepaetdController,
+                keyboardType: TextInputType.visiblePassword,
+                obscureText:
+                    _obscurePasswordRepeat, // Separate state for this field
+                decoration: InputDecoration(
+                  labelText: "Repeat Password",
+                  prefixIcon: const Icon(Icons.password_outlined),
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        _obscurePasswordRepeat = !_obscurePasswordRepeat;
+                      });
+                    },
+                    icon: _obscurePasswordRepeat
+                        ? const Icon(Icons.visibility_outlined)
+                        : const Icon(Icons.visibility_off_outlined),
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                validator: (String? value) {
+                  if (value == null || value.isEmpty) {
+                    return "Please enter password.";
+                  } else if (value != passwordController.text) {
+                    return "Password doesn't match.";
+                  }
+                  return null;
+                },
+              ),
               const SizedBox(height: 50),
               Column(
                 children: [
