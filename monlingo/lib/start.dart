@@ -31,9 +31,6 @@ class _StartState extends State<Start> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 245, 222, 229),
-      ),
       body: Stack(
         children: [
           // Background image
@@ -55,27 +52,27 @@ class _StartState extends State<Start> {
             ),
           ),
           Positioned(
-            top: 100,
+            top: 200,
             left: 200,
             child: LevelWidget(level: 5, stars: 0, isLocked: true),
           ),
           Positioned(
-            top: 200,
+            top: 300,
             left: 150,
             child: LevelWidget(level: 4, stars: 0, isLocked: true),
           ),
           Positioned(
-            top: 280,
+            top: 380,
             left: 220,
             child: LevelWidget(level: 3, stars: 0, isLocked: true),
           ),
           Positioned(
-            top: 350,
+            top: 450,
             left: 120,
             child: LevelWidget(level: 2, stars: 0, isLocked: true),
           ),
           Positioned(
-            top: 430,
+            top: 550,
             left: 180,
             child: LevelWidget(level: 1, stars: 3, isLocked: false),
           ),
@@ -120,16 +117,16 @@ class LevelWidget extends StatelessWidget {
                 Text(
                   level.toString(),
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 253, 253, 253)
+                    color: Colors.black
                   ),
                 ),
               if (isLocked)
                 const Icon(
                   Icons.lock,
-                  size: 24,
-                  color: Colors.white,
+                  size: 30,
+                  color: Color.fromARGB(255, 14, 13, 13),
                 ),
             ],
           ),
@@ -140,8 +137,8 @@ class LevelWidget extends StatelessWidget {
                 stars,
                 (index) => const Icon(
                   Icons.star,
-                  size: 16,
-                  color: Colors.yellow,
+                  size: 18,
+                  color: Color.fromARGB(255, 243, 220, 9),
                 ),
               ),
             ),
