@@ -82,7 +82,8 @@ class _StartState extends State<Start> {
                   MaterialPageRoute(builder: (context) => Duolingo()), 
                   );},
                   child: LevelWidget(level: 1, stars: 3, isLocked: false),
-                  ),),
+                  ),
+            ),
         ],
       ),
     );
