@@ -3,8 +3,6 @@ import 'package:login_flutter/home.dart';
 import 'package:login_flutter/login.dart';
 import 'package:login_flutter/signup.dart';
 import 'package:lottie/lottie.dart';
-//import 'home.dart';
-//import 'signup.dart';
 
 void main() {
   runApp(MyApp());
@@ -27,6 +25,7 @@ class startpage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -34,13 +33,31 @@ class startpage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               SizedBox(height: 20),
-              Lottie.asset("../assets/duo.json", width: 200),
+              Container(
+                width: 200,
+                height: 200,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: Colors.purple,
+                    width: 4,
+                  ),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Image.asset(
+                    "../assets/home/logo.png",
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
               Spacer(),
               Text(
                 'Time to Create a Profile!',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
+                  color: Colors.white, // Changed text color to white
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -49,6 +66,7 @@ class startpage extends StatelessWidget {
                 'Create a profile to save your progress and continue learning for free.',
                 style: TextStyle(
                   fontSize: 16,
+                  color: Colors.white, // Changed text color to white
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -56,13 +74,14 @@ class startpage extends StatelessWidget {
               Column(
                 children: [
                   ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => HomePage()));
-                      },
-                      child: Text("Home")),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => HomePage()),
+                      );
+                    },
+                    child: Text("Home"),
+                  ),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -79,7 +98,7 @@ class startpage extends StatelessWidget {
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
+                        backgroundColor: Colors.purple,
                         padding: EdgeInsets.symmetric(vertical: 16),
                       ),
                     ),
@@ -96,6 +115,8 @@ class startpage extends StatelessWidget {
                       },
                       child: Text('Already have an account?'),
                       style: TextButton.styleFrom(
+                        shadowColor:
+                            Colors.white, // Changed text color to white
                         padding: EdgeInsets.symmetric(vertical: 16),
                       ),
                     ),
