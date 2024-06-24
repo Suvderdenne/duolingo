@@ -20,7 +20,6 @@ def dt_register(request):
     jsons = json.loads(request.body)
     action = jsons['action']
     firstname = jsons['firstname']
-    lastname = jsons['lastname']
     email = jsons['email']
     passw = jsons['passw']
 
@@ -42,14 +41,17 @@ def dt_register(request):
     else:
         token = generateStr(12)
         query = F"""INSERT INTO public.t_user(
-	email, lastname, firstname, passw, regdate, enabled, token, tokendate)
-	VALUES ('{email}', '{lastname}', '{firstname}', '{passw}'
-    , NOW(), FALSE, '{token}', NOW() + interval \'1 day\');"""
+	email, firstname, passw, regdate, enabled, token, tokendate)
+	VALUES ('{email}', '{firstname}', '{passw}'
+    , NOW(), FALSE, '{token}', NOW() + interval \'1 day\');
+    INSERT INTO public.progress (
+    email,  lesson1, lesson2, lesson3, lesson4, lesson5) 
+    VALUES ('{email}', FALSE, FALSE, FALSE, FALSE, FALSE);"""
         cursor1 = myCon.cursor()
         cursor1.execute(query)
         myCon.commit()
         cursor1.close()
-        data = [{'email':email, 'firstname':firstname, 'lastname': lastname}]
+        data = [{'email':email, 'firstname':firstname}]
         resp = sendResponse(request, 1001, data, action)
         
 
@@ -89,7 +91,7 @@ def dt_login(request):
         myCon = connectDB()
         cursor1 = myCon.cursor()
         
-        query = F"""SELECT email, firstname, lastname
+        query = F"""SELECT email, firstname
                 FROM t_user 
                 WHERE email = '{email}' AND enabled = TRUE AND passw = '{passw}'"""
         
@@ -101,9 +103,8 @@ def dt_login(request):
         
         email = respRow[0]['email']
         firstname = respRow[0]['firstname']
-        lastname = respRow[0]['lastname']
 
-        data = [{'email':email, 'firstname':firstname, 'lastname':lastname}]
+        data = [{'email':email, 'firstname':firstname}]
         resp = sendResponse(request, 1002, data, action)
     else:
         data = [{'email':email}]
@@ -132,6 +133,9 @@ def checkService(request):
             return JsonResponse(json.loads(result))
         elif action == 'login':
             result = dt_login(request)
+            return JsonResponse(json.loads(result))
+        elif action == 'progress':
+            result = dt_progress(request)
             return JsonResponse(json.loads(result))
         else:
             result = sendResponse(request, 3001, [], action)
@@ -189,4 +193,39 @@ def checkToken(request):
         data = []
         resp = sendResponse(request, 3004, data, "not verified")
     return JsonResponse(json.loads(resp))
+from django.http import JsonResponse
+import json
 
+def dt_progress(request):
+    json_data = json.loads(request.body)
+    action = json_data.get('action')
+    email = json_data.get('email')
+
+    if not email:
+        return JsonResponse({'error': 'Email is required'}, status=400)
+
+    myCon = connectDB()  
+    cursor = myCon.cursor()
+
+    query = f"SELECT lesson1, lesson2, lesson3, lesson4, lesson5 FROM progress WHERE email = '{email}'"
+
+    cursor.execute(query)
+    row = cursor.fetchone()  # Assuming there's only one row for each email
+    cursor.close()
+
+    if not row:
+        return JsonResponse({'error': 'No progress found for this email'}, status=404)
+
+    lesson1, lesson2, lesson3, lesson4, lesson5 = row
+
+    data = {
+        'lesson1': lesson1,
+        'lesson2': lesson2,
+        'lesson3': lesson3,
+        'lesson4': lesson4,
+        'lesson5': lesson5,
+    }
+
+    resp = sendResponse(request, 1002, data, action)  
+
+    return resp

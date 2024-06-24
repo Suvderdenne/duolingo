@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lottie/lottie.dart';
 
 import 'dart:convert';
@@ -15,7 +14,6 @@ class _SignupState extends State<Signup> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController firstnameController = TextEditingController();
-  final TextEditingController lastnameController = TextEditingController();
 final TextEditingController passworrepaetdController = TextEditingController();
   bool _obscurePassword = true;
 bool _obscurePasswordRepeat = true;
@@ -30,8 +28,7 @@ bool _obscurePasswordRepeat = true;
       'action': 'register',
       'email': emailController.text,
       'passw': passwordController.text,
-      'firstname': firstnameController.text,
-      'lastname': lastnameController.text,
+      'firstname': firstnameController.text
     };
 
     try {
