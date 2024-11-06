@@ -5,6 +5,7 @@ import 'header_footer.dart';
 import 'Profile.dart';
 import 'duo.dart';
 import 'timelapse.dart';
+import 'leaderboard.dart';
 import 'login.dart';
 
 class HomePage extends StatelessWidget {

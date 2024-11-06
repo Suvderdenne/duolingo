@@ -4,6 +4,7 @@ import 'timelapse.dart';
 import 'login.dart';
 import 'home.dart';
 import 'Profile.dart';
+import 'leaderboard.dart';
 
 class Footer extends StatefulWidget {
   @override
@@ -47,6 +48,11 @@ class _FooterState extends State<Footer> {
             icon: Icons.timelapse,
             destination: Duolingo(),
           ),
+          _buildFooterButton(context, 
+          icon: Icons.leaderboard, 
+          destination: LeaderboardPG(),
+          ),
+
           _buildFooterButton(
             context,
             icon: Icons.more_horiz,
