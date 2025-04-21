@@ -7,8 +7,50 @@ import 'duo.dart';
 import 'timelapse.dart';
 import 'leaderboard.dart';
 import 'login.dart';
+import 'dart:convert'; // json болон base64Decode-г оруулж байгаа
+import 'package:http/http.dart' as http; // http-г оруулж байгаа
 
-class HomePage extends StatelessWidget {
+class Language {
+  final String name;
+  final String code;
+  final String flagBase64;
+
+  Language({required this.name, required this.code, required this.flagBase64});
+
+  factory Language.fromJson(Map<String, dynamic> json) {
+    return Language(
+      name: json['name'],
+      code: json['code'],
+      flagBase64: json['flag_base64'],
+    );
+  }
+}
+
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  late Future<List<Language>> languages;
+
+  @override
+  void initState() {
+    super.initState();
+    languages = fetchLanguages();
+  }
+
+  Future<List<Language>> fetchLanguages() async {
+    final response = await http.get(Uri.parse('http://127.0.0.1:8000/languages/'));
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
+      return data.map((json) => Language.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load languages');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,172 +70,73 @@ class HomePage extends StatelessWidget {
           child: ListView(
             children: [
               Padding(
-                padding: const EdgeInsets.all(0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Image.asset(
-                        '../assets/home/abc.png',
-                        height: 40,
-                      ),
-                    ),
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Column(
-                          children: [
-                            Icon(Icons.circle, color: Colors.blue),
-                            Text('0', style: TextStyle(color: Colors.blue)),
-                          ],
-                        ),
-                        SizedBox(width: 20),
-                        Column(
-                          children: [
-                            Icon(Icons.local_fire_department,
-                                color: Colors.orange),
-                            Text('1', style: TextStyle(color: Colors.orange)),
-                          ],
-                        ),
-                        SizedBox(width: 20),
-                        Column(
-                          children: [
-                            Icon(Icons.diamond, color: Colors.red),
-                            Text('822', style: TextStyle(color: Colors.red)),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                width: double.infinity,
-                height: 1,
-                color: const Color.fromARGB(255, 104, 103, 103),
-              ),
-              const SizedBox(height: 50),
-              SingleChildScrollView(
-                child: Center(
-                  child: Column(
-                    children: [
-                      Stack(
-                        alignment: Alignment.center,
+                padding: const EdgeInsets.all(16.0),
+                child: FutureBuilder<List<Language>>(
+                  future: languages,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Center(child: Text('No languages found.'));
+                    } else {
+                      List<Language> languageList = snapshot.data!;
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            margin: EdgeInsets.only(
-                                right: 45), // Add margin to the right
-                            child: ClipRRect(
-                              // borderRadius: BorderRadius.circular(100),
-                              child: Lottie.asset(
-                                '../assets/home/lot.json',
-                                fit: BoxFit.cover,
-                                alignment: Alignment.centerLeft,
-                                width: 150,
-                              ),
+                          const Text(
+                            'Available Languages:',
+                            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+                          ),
+                          const SizedBox(height: 16),
+                          GridView.builder(
+                            shrinkWrap: true, // Жижиглэхийн тулд
+                            physics: NeverScrollableScrollPhysics(), // Scroll-гүй болгох
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2, // 2 эгнээтэй болгох
+                              crossAxisSpacing: 10, // Эгнээ хоорондын зай
+                              mainAxisSpacing: 10, // Хонгилын зай
+                              childAspectRatio: 1.0, // Элементийн харьцааг тохируулна
                             ),
+                            itemCount: languageList.length,
+                            itemBuilder: (context, index) {
+                              final language = languageList[index];
+                              return Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.transparent,
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: Image.memory(
+                                        base64Decode(language.flagBase64),
+                                        width: 120, // Өндөр болон өргөнийг жижиглэнэ
+                                        height: 80, 
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      language.name,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
                           ),
                         ],
-                      ),
-                      const SizedBox(height: 30),
-                      const Text(
-                        'Intro',
-                        style: TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.bold),
-                      ),
-                      Card(
-                        color: Colors.purple.shade100,
-                        child: Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Column(
-                            children: [
-                              const Text(
-                                'Level 0',
-                                style: TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold),
-                              ),
-                              const Text(
-                                'Lesson 2 / 3',
-                                style: TextStyle(fontSize: 16),
-                              ),
-                              const SizedBox(height: 10),
-                              ElevatedButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => Start()),
-                                  );
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.purple,
-                                ),
-                                child: const Text('Start',
-                                    style: TextStyle(color: Colors.white)),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 30),
-              SingleChildScrollView(
-                // scrollDirection: Axis.horizontal,
-                child: Center(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.symmetric(vertical: 10),
-                        width: 200,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: Colors.purple,
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                        child: const Center(
-                          child: Text(
-                            'Сонсох',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.symmetric(vertical: 10),
-                        width: 200,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: Colors.purple,
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                        child: const Center(
-                          child: Text(
-                            'Ярих',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.symmetric(vertical: 10),
-                        width: 200,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: Colors.purple,
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                        child: const Center(
-                          child: Text(
-                            'Бичих',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                      );
+                    }
+                  },
                 ),
               ),
             ],
@@ -202,40 +145,5 @@ class HomePage extends StatelessWidget {
       ),
       bottomNavigationBar: Footer(),
     );
-  }
-}
-
-class OverlayMessage {
-  static void show(BuildContext context, String message) {
-    OverlayEntry overlayEntry;
-    overlayEntry = OverlayEntry(
-      builder: (context) => Positioned(
-        top: MediaQuery.of(context).size.height * 0.5,
-        width: MediaQuery.of(context).size.width,
-        child: Material(
-          color: Colors.transparent,
-          child: Container(
-            alignment: Alignment.center,
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color:
-                  Colors.blue.withOpacity(0.8), // Semi-transparent blue color
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              message,
-              style: const TextStyle(
-                  color: Colors.white), // Change to white for better contrast
-            ),
-          ),
-        ),
-      ),
-    );
-
-    Overlay.of(context).insert(overlayEntry);
-
-    Future.delayed(const Duration(seconds: 2), () {
-      overlayEntry.remove();
-    });
   }
 }

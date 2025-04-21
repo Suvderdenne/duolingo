@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'header_footer.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/widgets.dart';
-
-
 
 class LeaderboardPG extends StatefulWidget {
   const LeaderboardPG({super.key});
@@ -13,112 +11,109 @@ class LeaderboardPG extends StatefulWidget {
 }
 
 class _LeaderboardPGState extends State<LeaderboardPG> {
+  late Future<List<ContentType>> contentTypes;
+
+  @override
+  void initState() {
+    super.initState();
+    contentTypes = fetchContentTypes();
+  }
+
+  Future<List<ContentType>> fetchContentTypes() async {
+    final response = await http.get(Uri.parse('http://127.0.0.1:8000/content-types/1/'));
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
+      return data.map((json) => ContentType.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load content types');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-      title: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Spacer(),
-            Padding(
-              padding: const EdgeInsets.only(
-                  left: 25.0), // Зүүн талд 40 пикселийн зай нэмнэ
-            ),
-          ],
+        title: Text("Leaderboard"),
+      ),
+      body: Container(
+        // Adding gradient background
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color.fromARGB(255, 207, 74, 207),
+              Color.fromARGB(255, 88, 207, 207),
+              Color.fromARGB(255, 81, 255, 148),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: FutureBuilder<List<ContentType>>(
+          future: contentTypes,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Center(child: Text('No content found.'));
+            } else {
+              List<ContentType> contentList = snapshot.data!;
+              return ListView.builder(
+                itemCount: contentList.length,
+                itemBuilder: (context, index) {
+                  ContentType content = contentList[index];
+                  return Card(
+                      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                      elevation: 2,
+                      child: ExpansionTile(
+                        leading: Icon(Icons.language, size: 28),
+                        title: Text(
+                          content.name,
+                          style: TextStyle(
+                            fontSize: 20,             // Гарчиг томруулсан
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Text(
+                              content.description ?? 'No description available',
+                              style: TextStyle(
+                                fontSize: 16,           // Тайлбар жоохон том
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+
+                },
+              );
+            }
+          },
         ),
       ),
-      body: Stack(
-        children: [
-          // Rank 1st
-          Positioned(
-            top: 140,
-            right: 200,
-            child: rank(
-                radius: 45.0,
-                height: 25,
-                image: "Leaderboard/Profile1.png",
-                name: "Name 1",
-                point: "10/10"),
-          ),
-          // for rank 2nd
-          Positioned(
-            top: 240,
-            left: 45,
-            child: rank(
-                radius: 30.0,
-                height: 10,
-                image: "Leaderboard/Profile2.png",
-                name: "Name 2",
-                point: "9/10"),
-          ),
-          // For 3rd rank
-          Positioned(
-            top: 263,
-            right: 50,
-            child: rank(
-                radius: 30.0,
-                height: 10,
-                image: "Leaderboard/Profile3.png",
-                name: "Name 3",
-                point: "8/10"),
-          ),
-        ],
-      ),
+      bottomNavigationBar: Footer(),
     );
   }
+}
 
-  Column rank({
-    required double radius,
-    required double height,
-    required String image,
-    required String name,
-    required String point,
-  }) {
-    return Column(
-      children: [
-        CircleAvatar(
-          radius: radius,
-          backgroundImage: AssetImage(image),
-        ),
-        SizedBox(
-          height: height,
-        ),
-        Text(
-          name,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-        ),
-        SizedBox(
-          height: height,
-        ),
-        Container(
-          height: 25,
-          width: 70,
-          decoration: BoxDecoration(
-              color: Colors.black54, borderRadius: BorderRadius.circular(50)),
-          child: Row(
-            children: [
-              const SizedBox(
-                width: 5,
-              ),
-              const Icon(
-                Icons.back_hand,
-                color: Color.fromARGB(255, 255, 187, 0),
-              ),
-              const SizedBox(
-                width: 5,
-              ),
-              Text(
-                point,
-                style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 10,
-                    color: Colors.white),
-              ),
-            ],
-          ),
-        ),
-      ],
+class ContentType {
+  final int id;
+  final String name;
+  final String? description;
+
+  ContentType({required this.id, required this.name, this.description});
+
+  factory ContentType.fromJson(Map<String, dynamic> json) {
+    return ContentType(
+      id: json['id'],
+      name: json['name'],
+      description: json['description'],
     );
   }
 }

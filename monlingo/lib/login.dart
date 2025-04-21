@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lottie/lottie.dart';
-import 'home.dart';
-import 'Profile.dart';
-import 'signup.dart';
-import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'profile.dart'; // Import your ProfilePage here
+import 'signup.dart'; // Import your Signup page here
 class Login extends StatefulWidget {
   const Login({super.key});
 
@@ -27,12 +24,11 @@ class _LoginState extends State<Login> {
       return;
     }
 
-    final url = Uri.parse('http://127.0.0.1:8001/users/');
+    final url = Uri.parse('http://127.0.0.1:8000/login/'); // Correct URL
 
     final Map<String, dynamic> jsonMap = {
-      'action': 'login',
-      'email': emailController.text,
-      'passw': passwordController.text,
+      'username': emailController.text,  // Use 'username' instead of 'email'
+      'password': passwordController.text,
     };
 
     setState(() {
@@ -57,8 +53,10 @@ class _LoginState extends State<Login> {
 
         // Save user data to shared preferences
         final prefs = await SharedPreferences.getInstance();
-        prefs.setString('email', responseData['data'][0]['email']);
-        prefs.setString('firstname', responseData['data'][0]['firstname']);
+        prefs.setString('email', responseData['email']);
+        prefs.setString('firstname', responseData['full_name']);
+        prefs.setString('username', responseData['username']);
+        prefs.setString('profile_picture', responseData['profile_picture'] ?? '');
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -66,6 +64,7 @@ class _LoginState extends State<Login> {
             backgroundColor: Colors.green,
           ),
         );
+
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => ProfilePage()),
@@ -106,7 +105,7 @@ class _LoginState extends State<Login> {
           child: Column(
             children: [
               const SizedBox(height: 100),
-              Lottie.asset("../assets/register.json", width: 200),
+              Lottie.asset("register.json", width: 200), // Adjust asset path if needed
               Text(
                 "Login",
                 style: Theme.of(context).textTheme.headlineLarge,
@@ -116,7 +115,7 @@ class _LoginState extends State<Login> {
                 controller: emailController,
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
-                  labelText: "Email",
+                  labelText: "Username",
                   prefixIcon: const Icon(Icons.email_outlined),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -127,10 +126,7 @@ class _LoginState extends State<Login> {
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter your email';
-                  }
-                  if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
-                    return 'Please enter a valid email';
+                    return 'Please enter your username';
                   }
                   return null;
                 },
@@ -177,12 +173,13 @@ class _LoginState extends State<Login> {
                           onPressed: sendJson,
                           child: Text('Login'),
                         ),
-                        const SizedBox(height: 30,),
+                        const SizedBox(height: 30),
                         TextButton(
                           onPressed: () {
+                            // Navigate to sign up page
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => Signup()),
+                              MaterialPageRoute(builder: (context) => Signup()), // Add your Signup page here
                             );
                           },
                           child: Text("Register"),

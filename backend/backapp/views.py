@@ -1,232 +1,150 @@
 from django.shortcuts import render
-from datetime import datetime
-from django.http import JsonResponse, HttpResponse
-import json
-from backend.settings import *
-from django.views.decorators.csrf import csrf_exempt
+from rest_framework import viewsets, permissions
+from .models import Language, Lesson, LessonContent, Quiz, QuizChoice, UserProgress, ContentType
+# Create your views here.
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import generics
+from django.contrib.auth import get_user_model
+from .serializers import RegisterSerializer, UserSerializer, CustomTokenObtainPairSerializer, LanguageSerializer, LessonSerializer, LessonContentSerializer, QuizSerializer, QuizChoiceSerializer, UserProgressSerializer, ContentTypeSerializer
+from rest_framework.permissions import AllowAny
+from rest_framework_simplejwt.views import TokenObtainPairView
+
+User = get_user_model()
+
+class RegisterView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    permission_classes = [AllowAny]
+    serializer_class = RegisterSerializer
 
 
-def gettime(request):
-    jsons = json.loads(request.body)
-    action = jsons['action']
-
-    today = datetime.now()
-    data = [{'datetime':today}]
-    resp = sendResponse(request, 200, data, action)
-    return resp
+class CustomLoginView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
 
 
-def dt_register(request):
-    jsons = json.loads(request.body)
-    action = jsons['action']
-    firstname = jsons['firstname']
-    email = jsons['email']
-    passw = jsons['passw']
-
-    myCon = connectDB()
-    cursor = myCon.cursor()
-    
-    query = F"""SELECT COUNT(*) AS usercount FROM t_user 
-            WHERE email = '{email}' AND enabled = TRUE"""
-    
-    cursor.execute(query)
-    columns = cursor.description
-    respRow = [{columns[index][0]:column for index, 
-        column in enumerate(value)} for value in cursor.fetchall()]
-    cursor.close()
-
-    if respRow[0]['usercount'] == 1:
-        data = [{'email':email}]
-        resp = sendResponse(request, 1000, data, action)
-    else:
-        token = generateStr(12)
-        query = F"""INSERT INTO public.t_user(
-	email, firstname, passw, regdate, enabled, token, tokendate)
-	VALUES ('{email}', '{firstname}', '{passw}'
-    , NOW(), FALSE, '{token}', NOW() + interval \'1 day\');
-    INSERT INTO public.progress (
-    email,  lesson1, lesson2, lesson3, lesson4, lesson5) 
-    VALUES ('{email}', FALSE, FALSE, FALSE, FALSE, FALSE);"""
-        cursor1 = myCon.cursor()
-        cursor1.execute(query)
-        myCon.commit()
-        cursor1.close()
-        data = [{'email':email, 'firstname':firstname}]
-        resp = sendResponse(request, 1001, data, action)
-        
-
-        sendMail(email, "Verify your email", F"""
-                <html>
-                <body>
-                    <p>SECCESFULLY SIGNED UP. CONFIRM THROUGH THIS LINK. </p>
-                    <p> <a href="http://localhost:8001/check/?token={token}">Batalgaajuulalt</a> </p>
-                </body>
-                </html>
-                """)
-
-    return resp
+# Language APIView
+class LanguageAPIView(generics.ListCreateAPIView):
+    queryset = Language.objects.all()
+    serializer_class = LanguageSerializer
+    permission_classes = [permissions.AllowAny]
 
 
-def dt_login(request):
-    jsons = json.loads(request.body)
-    action = jsons['action']
-    email = jsons['email']
-    passw = jsons['passw']
+# ✅ Lesson APIView
+class LessonAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
 
-
-
-    myCon = connectDB()
-    cursor = myCon.cursor()
-    
-    query = F"""SELECT COUNT(*) AS usercount FROM t_user 
-            WHERE email = '{email}' AND enabled = TRUE AND passw = '{passw}'"""
-    
-    cursor.execute(query)
-    columns = cursor.description
-    respRow = [{columns[index][0]:column for index, 
-        column in enumerate(value)} for value in cursor.fetchall()]
-    cursor.close()
-
-    if respRow[0]['usercount'] == 1:
-        myCon = connectDB()
-        cursor1 = myCon.cursor()
-        
-        query = F"""SELECT email, firstname
-                FROM t_user 
-                WHERE email = '{email}' AND enabled = TRUE AND passw = '{passw}'"""
-        
-        cursor1.execute(query)
-        columns = cursor1.description
-        respRow = [{columns[index][0]:column for index, 
-            column in enumerate(value)} for value in cursor1.fetchall()]
-        cursor1.close()
-        
-        email = respRow[0]['email']
-        firstname = respRow[0]['firstname']
-
-        data = [{'email':email, 'firstname':firstname}]
-        resp = sendResponse(request, 1002, data, action)
-    else:
-        data = [{'email':email}]
-        resp = sendResponse(request, 1004, data, action)
-
-    return resp
-
-
-@csrf_exempt
-def checkService(request):
-    if request.method == "POST":
-        try :
-            jsons = json.loads(request.body)
-        except json.JSONDecodeError:
-            
-
-            result = sendResponse(request, 3003, [], "no action")
-            return JsonResponse(json.loads(result))
-        action = jsons['action']
-
-        if action == 'gettime':
-            result = gettime(request)
-            return JsonResponse(json.loads(result))
-        elif action == 'register':
-            result = dt_register(request)
-            return JsonResponse(json.loads(result))
-        elif action == 'login':
-            result = dt_login(request)
-            return JsonResponse(json.loads(result))
-        elif action == 'progress':
-            result = dt_progress(request)
-            return JsonResponse(json.loads(result))
+    def get(self, request, content_type_id=None):
+        if content_type_id:
+            lessons = Lesson.objects.filter(content_type__id=content_type_id).order_by('order')
         else:
-            result = sendResponse(request, 3001, [], action)
-            return JsonResponse(json.loads(result))
-    else:
-        result = sendResponse(request, 3002, [], "no action")
-        return JsonResponse(json.loads(result))
+            lessons = Lesson.objects.none()
+
+        serializer = LessonSerializer(lessons, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = LessonSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@csrf_exempt
-def checkToken(request):
-    token = request.GET.get('token')
-    myCon = connectDB()
-    cursor = myCon.cursor()
-    
-    query = F"""SELECT COUNT(*) AS usertokencount, MIN(email) as email, MAX(firstname) as firstname, 
-                    MIN(lastname) AS lastname 
-            FROM t_user 
-            WHERE token = '{token}' AND enabled = FALSE AND NOW() <= tokendate """
-    
-    cursor.execute(query)
-    columns = cursor.description
-    respRow = [{columns[index][0]:column for index, 
-        column in enumerate(value)} for value in cursor.fetchall()]
-    cursor.close()
 
-    if respRow[0]['usertokencount'] == 1:
-        query = F"""UPDATE t_user SET enabled = TRUE WHERE token = '{token}'"""
-        cursor1 = myCon.cursor()
-        cursor1.execute(query)
-        myCon.commit()
-        cursor1.close()
 
-        tokenExpired = generateStr(30)
-        email = respRow[0]['email']
-        firstname = respRow[0]['firstname']
-        lastname = respRow[0]['lastname']
-        query = F"""UPDATE t_user SET token = '{tokenExpired}', tokendate = NOW() WHERE email = '{email}'"""
-        cursor1 = myCon.cursor()
-        cursor1.execute(query)
-        myCon.commit()
-        cursor1.close()
-        
-        data = [{'email':email, 'firstname':firstname, 'lastname':lastname}]
-        resp = sendResponse(request, 1003, data, "verified")
-        sendMail(email, "SECCESFUL VERIFICATION",  F"""
-                <html>
-                <body>
-                    <p>SECCESFUL VERIFICATION </p>
-                </body>
-                </html>
-                """)
-    else:
-        
+# ✅ LessonContent APIView
+class LessonContentAPIView(APIView):
+    def get(self, request, lesson_id):
+        lesson_contents = LessonContent.objects.filter(lesson_id=lesson_id)
+
+        if not lesson_contents.exists():
+            return Response({'detail': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = LessonContentSerializer(lesson_contents, many=True)
+        return Response(serializer.data)
+
+
+# ❌ ContentType-тай холбоотой API-уудыг устгасан
+# class ContentTypeListAPIView(APIView): ❌
+# class ContentTypeLessonAPIView(APIView): ❌
+
+# Хэрвээ ContentType model өөр зорилгоор хэрэглэгдэж байгаа бол
+# ContentTypeListAPIView-ийг үлдээж болно:
+
+class ContentTypeListAPIView(generics.ListAPIView):
+    queryset = ContentType.objects.all()
+    serializer_class = ContentTypeSerializer
+    permission_classes = [permissions.AllowAny]
+
+
+class ContentTypeWithLessonsAPIView(APIView):
+    def get(self, request, language_id):
+        content_types = ContentType.objects.filter(language_id=language_id)
         data = []
-        resp = sendResponse(request, 3004, data, "not verified")
-    return JsonResponse(json.loads(resp))
-from django.http import JsonResponse
-import json
+        for content_type in content_types:
+            lessons = Lesson.objects.filter(content_type=content_type)
+            lesson_data = [
+                {
+                    'id': lesson.id,
+                    'title': lesson.title,
+                    'thumbnail_base64': lesson.thumbnail_base64(),
+                    'content_type_name': content_type.name,
+                }
+                for lesson in lessons
+            ]
+            data.append({
+                'content_type_id': content_type.id,
+                'content_type_name': content_type.name,
+                'lessons': lesson_data
+            })
+        return Response(data)
+# Quiz APIView
+class QuizAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
 
-def dt_progress(request):
-    json_data = json.loads(request.body)
-    action = json_data.get('action')
-    email = json_data.get('email')
+    def get(self, request):
+        quizzes = Quiz.objects.all()
+        serializer = QuizSerializer(quizzes, many=True)
+        return Response(serializer.data)
 
-    if not email:
-        return JsonResponse({'error': 'Email is required'}, status=400)
+    def post(self, request):
+        serializer = QuizSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    myCon = connectDB()  
-    cursor = myCon.cursor()
 
-    query = f"SELECT lesson1, lesson2, lesson3, lesson4, lesson5 FROM progress WHERE email = '{email}'"
+# QuizChoice APIView
+class QuizChoiceAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
 
-    cursor.execute(query)
-    row = cursor.fetchone()  # Assuming there's only one row for each email
-    cursor.close()
+    def get(self, request):
+        choices = QuizChoice.objects.all()
+        serializer = QuizChoiceSerializer(choices, many=True)
+        return Response(serializer.data)
 
-    if not row:
-        return JsonResponse({'error': 'No progress found for this email'}, status=404)
+    def post(self, request):
+        serializer = QuizChoiceSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    lesson1, lesson2, lesson3, lesson4, lesson5 = row
 
-    data = {
-        'lesson1': lesson1,
-        'lesson2': lesson2,
-        'lesson3': lesson3,
-        'lesson4': lesson4,
-        'lesson5': lesson5,
-    }
+# UserProgress APIView
+class UserProgressAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
 
-    resp = sendResponse(request, 1002, data, action)  
+    def get(self, request):
+        progress = UserProgress.objects.filter(user=request.user)
+        serializer = UserProgressSerializer(progress, many=True)
+        return Response(serializer.data)
 
-    return resp
-
+    def post(self, request):
+        serializer = UserProgressSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

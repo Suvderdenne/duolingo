@@ -11,15 +11,11 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
-import psycopg2
-from datetime import datetime
-import json, string, random
-import smtplib
-from email.mime.text import MIMEText
+import os 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+SESSION_COOKIE_AGE = 3600 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -42,6 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'backapp',
+    'rest_framework',
+    'rest_framework_simplejwt',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -52,6 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -78,10 +79,15 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'monlingooo',
+        'USER': 'postgres',
+        'PASSWORD': '123',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
@@ -127,67 +133,15 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-def sendResponse(request, resultCode, data, action="no action"):
-    response = {}
-    response["resultCode"] = resultCode
-    response["resultMessage"] = resultMessages[resultCode]
-    response["data"] = data
-    response["size"] = len(data)
-    response["action"] = action
-    response["curdate"] = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
-    return json.dumps(response, indent=4, sort_keys=True, default=str)
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "http://localhost:50465",  # Your Flutter Web Debug URL
+    "http://your-ip-address:8000",  # If using a local network
+]
+CORS_ALLOW_METHODS = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+CORS_ALLOW_HEADERS = ["*"]
 
 
-
-resultMessages = {
-    200:"Success",
-    404:"Not found",
-    1000 : "Mail already signed up",
-    1001 : "signed up successful.Verification sent.verify within 24 hours.",
-    1002 : "Login Successful",
-    1003 : "Verify succesful",
-    1004 : "Username or password worng.",
-    3001 : "wrong action",
-    3002 : "Wrong method",
-    3003 : "wrong json",
-    3004 : "Token expired.",
-}
-
-
-def connectDB():
-    con = psycopg2.connect (
-        host ='192.168.0.15',
-        #host = '59.153.86.251',
-        dbname = 'qrauto',
-        user = 'userauto',
-        password = '1234',
-        port = '5938',
-    )
-    return con
-
-
-
-def disconnectDB(con):
-    con.close()
-
-
-
-def generateStr(length):
-    characters = string.ascii_lowercase + string.digits
-    password = ''.join(random.choice(characters) for i in range(length))
-    return password
-
-
-def sendMail(recipient, subj, bodyHtml):
-    sender_email = "sw21d047@mandakh.edu.mn"
-    sender_password = "02301173"
-    recipient_email = recipient
-    subject = subj
-    body = bodyHtml
-    html_message = MIMEText(body, 'html')
-    html_message['Subject'] = subject
-    html_message['From'] = sender_email
-    html_message['To'] = recipient_email
-    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
-        server.login(sender_email, sender_password)
-        server.sendmail(sender_email, recipient_email, html_message.as_string())
+AUTH_USER_MODEL = 'backapp.User'
