@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'lesson_content_page.dart'; // Import the LessonContentPage
 
 class Duolingo extends StatefulWidget {
   const Duolingo({super.key});
@@ -11,7 +12,7 @@ class Duolingo extends StatefulWidget {
 
 class _DuolingoState extends State<Duolingo> {
   List<dynamic> contentTypes = [];
-  Map<int, List<dynamic>> lessonsByType = {}; // Lessons grouped by content type
+  Map<int, List<dynamic>> lessonsByType = {};
 
   @override
   void initState() {
@@ -19,7 +20,6 @@ class _DuolingoState extends State<Duolingo> {
     _fetchContentTypes();
   }
 
-  // Fetch content types from API
   Future<void> _fetchContentTypes() async {
     final response = await http.get(Uri.parse('http://127.0.0.1:8000/content-types/2/'));
     if (response.statusCode == 200) {
@@ -32,12 +32,11 @@ class _DuolingoState extends State<Duolingo> {
     }
   }
 
-  // Fetch lessons for all content types at once
   Future<void> _fetchLessonsForAllContentTypes() async {
     for (var type in contentTypes) {
       final contentTypeId = type['id'];
       final response = await http.get(Uri.parse('http://127.0.0.1:8000/lessons/$contentTypeId/'));
-      
+
       if (response.statusCode == 200) {
         setState(() {
           lessonsByType[contentTypeId] = List<dynamic>.from(json.decode(utf8.decode(response.bodyBytes)));
@@ -51,99 +50,148 @@ class _DuolingoState extends State<Duolingo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: Text('Duolingo'),
+        title: Text('Monlingo'),
+        centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      extendBodyBehindAppBar: true,
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color.fromARGB(255, 207, 74, 207),
-              Color.fromARGB(255, 88, 207, 207),
-              Color.fromARGB(255, 81, 255, 148),
-            ],
+      body: Stack(
+        children: [
+          // Арын зураг
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/background.jpg'),
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
-        ),
-        child: contentTypes.isNotEmpty
-            ? ListView.builder(
-                padding: EdgeInsets.all(16),
-                itemCount: contentTypes.length,
-                itemBuilder: (context, index) {
-                  final type = contentTypes[index];
-                  final int typeId = type['id'];
-                  final List<dynamic>? lessons = lessonsByType[typeId];
+          // Градиент давхарга
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.white.withOpacity(0.6),
+                  Colors.blueAccent.withOpacity(0.3),
+                  Colors.purpleAccent.withOpacity(0.3),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+          ),
+          // Контентууд
+          contentTypes.isNotEmpty
+              ? ListView.builder(
+                  padding: EdgeInsets.fromLTRB(16, 100, 16, 16),
+                  itemCount: contentTypes.length,
+                  itemBuilder: (context, index) {
+                    final type = contentTypes[index];
+                    final int typeId = type['id'];
+                    final List<dynamic>? lessons = lessonsByType[typeId];
 
-                  return Card(
-                    margin: EdgeInsets.symmetric(vertical: 8),
-                    color: Colors.white.withOpacity(0.8), // Make cards semi-transparent
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ListTile(
-                          title: Text(
-                            type['name'],
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                    return Card(
+                      margin: EdgeInsets.symmetric(vertical: 8),
+                      color: Colors.white.withOpacity(0.85),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ListTile(
+                            title: Text(
+                              type['name'],
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            leading: Icon(Icons.category, color: Colors.deepPurple),
                           ),
-                          leading: Icon(Icons.category),
-                        ),
-                        if (lessons != null && lessons.isNotEmpty)
-                          Container(
-                            height: 220,
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: lessons.length,
-                              itemBuilder: (context, index) {
-                                var lesson = lessons[index];
-                                return Card(
-                                  margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                  color: Colors.white.withOpacity(0.8), // Make cards semi-transparent
-                                  child: Container(
-                                    width: 160,
-                                    padding: EdgeInsets.all(8),
-                                    child: Column(
-                                      children: [
-                                        ClipRRect(
-                                          borderRadius: BorderRadius.circular(8),
-                                          child: Image.memory(
-                                            Base64Decoder().convert(lesson['thumbnail_base64']),
-                                            width: 120,
-                                            height: 120,
-                                            fit: BoxFit.cover,
-                                          ),
+                          if (lessons != null && lessons.isNotEmpty)
+                            Container(
+                              height: 220,
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: lessons.length,
+                                itemBuilder: (context, index) {
+                                  var lesson = lessons[index];
+                                  return GestureDetector(
+                                    onTap: () {
+                                      // Navigate to the LessonContentPage with the lesson ID
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => LessonContentPage(lessonId: lesson['id']),
                                         ),
-                                        SizedBox(height: 8),
-                                        Text(
-                                          lesson['title'],
-                                          style: TextStyle(fontWeight: FontWeight.bold),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
+                                      );
+                                    },
+                                    child: Card(
+                                      margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                      color: Colors.white.withOpacity(0.8),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Container(
+                                        width: 350,
+                                        padding: EdgeInsets.all(4),
+                                        child: Stack(
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius: BorderRadius.circular(8),
+                                              child: Image.memory(
+                                                Base64Decoder().convert(lesson['thumbnail_base64']),
+                                                width: 350,
+                                                height: 180,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                            Positioned(
+                                              bottom: 0,
+                                              left: 0,
+                                              right: 0,
+                                              child: Container(
+                                                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.black.withOpacity(0.5),
+                                                  borderRadius: BorderRadius.only(
+                                                    bottomLeft: Radius.circular(8),
+                                                    bottomRight: Radius.circular(8),
+                                                  ),
+                                                ),
+                                                child: Text(
+                                                  lesson['title'],
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white,
+                                                  ),
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                      ],
+                                      ),
                                     ),
-                                  ),
-                                );
-                              },
+                                  );
+                                },
+                              ),
+                            )
+                          else
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              child: Text(
+                                'No lessons available for this category',
+                                style: TextStyle(color: Colors.black87),
+                              ),
                             ),
-                          )
-                        else
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                            child: Text(
-                              'No lessons available for this category',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                      ],
-                    ),
-                  );
-                },
-              )
-            : Center(child: CircularProgressIndicator(color: Colors.white)),
+                        ],
+                      ),
+                    );
+                  },
+                )
+              : Center(child: CircularProgressIndicator(color: Colors.white)),
+        ],
       ),
     );
   }

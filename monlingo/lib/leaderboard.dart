@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'header_footer.dart';
+import 'timelapse.dart'; // Duolingo хуудсыг import хийж байна
 
 class LeaderboardPG extends StatefulWidget {
-  const LeaderboardPG({super.key});
+  final String languageCode;
+
+  const LeaderboardPG({super.key, required this.languageCode});
 
   @override
   State<LeaderboardPG> createState() => _LeaderboardPGState();
@@ -20,7 +22,9 @@ class _LeaderboardPGState extends State<LeaderboardPG> {
   }
 
   Future<List<ContentType>> fetchContentTypes() async {
-    final response = await http.get(Uri.parse('http://127.0.0.1:8000/content-types/1/'));
+    final response = await http.get(
+      Uri.parse('http://127.0.0.1:8000/content-types/${widget.languageCode}/'),
+    );
 
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
@@ -34,11 +38,11 @@ class _LeaderboardPGState extends State<LeaderboardPG> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Leaderboard"),
+        title: const Text("Leaderboard"),
+        backgroundColor: Colors.deepPurple,
       ),
       body: Container(
-        // Adding gradient background
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
               Color.fromARGB(255, 207, 74, 207),
@@ -49,59 +53,92 @@ class _LeaderboardPGState extends State<LeaderboardPG> {
             end: Alignment.bottomRight,
           ),
         ),
-        child: FutureBuilder<List<ContentType>>(
-          future: contentTypes,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Center(child: Text('No content found.'));
-            } else {
-              List<ContentType> contentList = snapshot.data!;
-              return ListView.builder(
-                itemCount: contentList.length,
-                itemBuilder: (context, index) {
-                  ContentType content = contentList[index];
-                  return Card(
-                      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                      elevation: 2,
-                      child: ExpansionTile(
-                        leading: Icon(Icons.language, size: 28),
-                        title: Text(
-                          content.name,
-                          style: TextStyle(
-                            fontSize: 20,             // Гарчиг томруулсан
-                            fontWeight: FontWeight.w600,
+        child: Column(
+          children: [
+            Expanded(
+              child: FutureBuilder<List<ContentType>>(
+                future: contentTypes,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Алдаа: ${snapshot.error}'));
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Center(child: Text('Контент олдсонгүй.'));
+                  } else {
+                    List<ContentType> contentList = snapshot.data!;
+                    return ListView.builder(
+                      itemCount: contentList.length,
+                      itemBuilder: (context, index) {
+                        ContentType content = contentList[index];
+                        return Card(
+                          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                          elevation: 3,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
                           ),
-                        ),
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Text(
-                              content.description ?? 'No description available',
-                              style: TextStyle(
-                                fontSize: 16,           // Тайлбар жоохон том
-                                fontWeight: FontWeight.w400,
+                          child: ExpansionTile(
+                            leading: const Icon(Icons.language, size: 28, color: Colors.deepPurple),
+                            title: Text(
+                              content.name,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
                               ),
                             ),
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Text(
+                                  content.description ?? 'Тайлбар алга байна.',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        );
+                      },
                     );
-
+                  }
                 },
-              );
-            }
-          },
+              ),
+            ),
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Duolingo()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepPurple,
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                ),
+                icon: const Icon(Icons.school, color: Colors.white),
+                label: const Text(
+                  'Хичээл үзэх',
+                  style: TextStyle(fontSize: 18, color: Colors.white),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
-      bottomNavigationBar: Footer(),
     );
   }
 }
 
+// ---- Контент загвар ----
 class ContentType {
   final int id;
   final String name;

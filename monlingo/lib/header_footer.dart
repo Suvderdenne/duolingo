@@ -36,7 +36,7 @@ class _FooterState extends State<Footer> {
           _buildFooterButton(
             context,
             icon: Icons.shop,
-            destination: Duo(),
+            destination: QuizPage(),
           ),
           _buildFooterButton(
             context,
@@ -48,9 +48,10 @@ class _FooterState extends State<Footer> {
             icon: Icons.timelapse,
             destination: Duolingo(),
           ),
-          _buildFooterButton(context, 
-          icon: Icons.leaderboard, 
-          destination: LeaderboardPG(),
+          _buildFooterButton(
+            context,
+            icon: Icons.leaderboard,
+            destination: LeaderboardPG(languageCode: 'mn'), // 'mn' эсвэл тухайн хэрэглэгчийн хэл
           ),
 
           _buildFooterButton(
