@@ -1,10 +1,27 @@
 from django.contrib import admin
 from .models import (
-    User, Language, Lesson, LessonContent,
-    Quiz, QuizChoice, UserProgress, ContentType
+    User, Language, Lesson, LessonContent, UserProgress, ContentType, Quiz, QuizChoice
 )
 from django.utils.html import format_html
 import base64
+
+class QuizChoiceInline(admin.TabularInline):  # эсвэл admin.StackedInline гэж бас болно
+    model = QuizChoice
+    extra = 1  # Нэмэлт хоосон мөр үзүүлэх
+
+@admin.register(Quiz)
+class QuizAdmin(admin.ModelAdmin):
+    list_display = ('id', 'lesson', 'content_type', 'question_text', 'order')
+    list_filter = ('lesson', 'content_type')
+    search_fields = ('question_text',)
+    ordering = ('lesson', 'order')
+    inlines = [QuizChoiceInline]  # Quiz дотроо QuizChoice-уудыг харуулах
+
+@admin.register(QuizChoice)
+class QuizChoiceAdmin(admin.ModelAdmin):
+    list_display = ('id', 'quiz', 'text', 'is_correct')
+    list_filter = ('is_correct', 'quiz')
+    search_fields = ('text',)
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     list_display = ('username', 'full_name', 'email', 'score')
@@ -30,6 +47,7 @@ class LessonAdmin(admin.ModelAdmin):
     search_fields = ('title',)
 
     def thumbnail_preview(self, obj):
+        """Admin дээрх хичээлийн бяцхан зураг харах"""
         if obj.thumbnail:
             return format_html('<img src="{}" width="50" height="50" />', obj.thumbnail.url)
         return "No Thumbnail"
@@ -43,18 +61,26 @@ class LessonContentAdmin(admin.ModelAdmin):
     search_fields = ('text',)
 
     def get_image_base64(self, obj):
+        """Конверт Image-ийн контентыг Base64 форматанд"""
         if obj.image:
-            with open(obj.image.path, 'rb') as img_file:
-                img_data = img_file.read()
-                return base64.b64encode(img_data).decode('utf-8')
+            try:
+                with open(obj.image.path, 'rb') as img_file:
+                    img_data = img_file.read()
+                    return base64.b64encode(img_data).decode('utf-8')
+            except FileNotFoundError:
+                return "Image not found"
         return None
     get_image_base64.short_description = 'Image Base64'
 
     def get_audio_base64(self, obj):
+        """Конверт Audio-ийн контентыг Base64 форматанд"""
         if obj.audio:
-            with open(obj.audio.path, 'rb') as audio_file:
-                audio_data = audio_file.read()
-                return base64.b64encode(audio_data).decode('utf-8')
+            try:
+                with open(obj.audio.path, 'rb') as audio_file:
+                    audio_data = audio_file.read()
+                    return base64.b64encode(audio_data).decode('utf-8')
+            except FileNotFoundError:
+                return "Audio not found"
         return None
     get_audio_base64.short_description = 'Audio Base64'
 
@@ -64,27 +90,11 @@ class ContentTypeAdmin(admin.ModelAdmin):
     search_fields = ('name', 'description')
     ordering = ('name',)
     list_filter = ('language',)  # Хайлт шүүлтэд хэлээр шүүх боломжтой
-    
-@admin.register(Quiz)
-class QuizAdmin(admin.ModelAdmin):
-    list_display = ('lesson', 'question', 'audio_base64_display')
-    list_filter = ('lesson',)
-    search_fields = ('question',)
-
-    def audio_base64_display(self, obj):
-        # Аудио контентыг харуулах буюу текст хэлбэрээр үзүүлэх
-        if obj.audio_base64():
-            return format_html('<a href="data:audio/mp3;base64,{}" target="_blank">Аудио үзэх</a>', obj.audio_base64())
-        return 'Аудио байхгүй'
-    audio_base64_display.short_description = 'Аудио'
-
-@admin.register(QuizChoice)
-class QuizChoiceAdmin(admin.ModelAdmin):
-    list_display = ('quiz', 'text', 'is_correct')
-    list_filter = ('quiz', 'is_correct')
 
 @admin.register(UserProgress)
 class UserProgressAdmin(admin.ModelAdmin):
     list_display = ('user', 'lesson', 'is_completed', 'score', 'last_accessed')
     list_filter = ('is_completed', 'lesson')
-    search_fields = ('user__username',)
+    search_fields = ('user__username',)  
+
+

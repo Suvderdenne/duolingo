@@ -38,7 +38,7 @@ class _LeaderboardPGState extends State<LeaderboardPG> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Leaderboard"),
+        title: const Text("Хэлний түвшин"),
         backgroundColor: Colors.deepPurple,
       ),
       body: Container(

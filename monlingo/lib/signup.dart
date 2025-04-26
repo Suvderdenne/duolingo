@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:lottie/lottie.dart';
+import 'package:login_flutter/home.dart';
 
 class Signup extends StatefulWidget {
   const Signup({Key? key}) : super(key: key);
@@ -69,9 +70,9 @@ class _SignupState extends State<Signup> {
             children: [
               const SizedBox(height: 80),
               Lottie.asset("register.json", width: 200), // Replace with actual asset path
-              Text("Бүртгүүлэх", style: Theme.of(context).textTheme.headlineLarge),
+              Text("Бүртгүүлэх", style: Theme.of(context).textTheme.headlineLarge?.copyWith(fontWeight: FontWeight.bold)),
               const SizedBox(height: 10),
-              Text("Шинэ бүртгэл үүсгэх", style: Theme.of(context).textTheme.bodyMedium),
+              Text("Шинэ бүртгэл үүсгэх", style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[600])),
               const SizedBox(height: 30),
 
               // Username
@@ -142,6 +143,7 @@ class _SignupState extends State<Signup> {
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 50),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  backgroundColor: Colors.blueAccent, // Correct button background color
                 ),
               ),
               const SizedBox(height: 15),

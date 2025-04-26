@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import *
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
 User = get_user_model()
 
 class UserSerializer(serializers.ModelSerializer):
@@ -75,19 +76,89 @@ class LessonContentSerializer(serializers.ModelSerializer):
             with open(obj.audio.path, 'rb') as audio_file:
                 return base64.b64encode(audio_file.read()).decode('utf-8')
         return None
-
     
+# class QuizChoiceSerializer(serializers.ModelSerializer):
+#     image_base64 = serializers.SerializerMethodField()
+#     audio_base64 = serializers.SerializerMethodField()
+
+#     class Meta:
+#         model = QuizChoice
+#         fields = ['id', 'text', 'is_correct', 'image', 'audio', 'image_base64', 'audio_base64']
+
+#     def get_image_base64(self, obj):
+#         return obj.image_base64()
+
+#     def get_audio_base64(self, obj):
+#         return obj.audio_base64()
+    
+# class QuizSerializer(serializers.ModelSerializer):
+#     choices = QuizChoiceSerializer(many=True, read_only=True)
+#     image_base64 = serializers.SerializerMethodField()
+#     audio_base64 = serializers.SerializerMethodField()
+
+#     class Meta:
+#         model = Quiz
+#         fields = ['id', 'lesson', 'content_type', 'question_text', 'audio', 'image', 'order', 'choices', 'image_base64', 'audio_base64']
+
+#     def get_image_base64(self, obj):
+#         return obj.image_base64()
+
+#     def get_audio_base64(self, obj):
+#         return obj.audio_base64()
+class QuizChoiceSerializer(serializers.ModelSerializer):
+    image_base64 = serializers.SerializerMethodField()
+    audio_base64 = serializers.SerializerMethodField()
+
+    class Meta:
+        model = QuizChoice
+        fields = ['id', 'text', 'is_correct', 'image', 'audio', 'image_base64', 'audio_base64']
+
+    def get_image_base64(self, obj):
+        return obj.image_base64()
+
+    def get_audio_base64(self, obj):
+        return obj.audio_base64()
+
+
+class QuizSerializer(serializers.ModelSerializer):
+    choices = QuizChoiceSerializer(many=True, read_only=True)
+    image_base64 = serializers.SerializerMethodField()
+    audio_base64 = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Quiz
+        fields = ['id', 'lesson', 'content_type', 'question_text', 'audio', 'image', 'order', 'choices', 'image_base64', 'audio_base64']
+
+    def get_image_base64(self, obj):
+        return obj.image_base64()
+
+    def get_audio_base64(self, obj):
+        return obj.audio_base64()
 class LessonSerializer(serializers.ModelSerializer):
-    contents = LessonContentSerializer(many=True, read_only=True)
+    contents = LessonContentSerializer(many=True, read_only=True)  # Энэ байгаа
     thumbnail_base64 = serializers.SerializerMethodField()
+    quizzes = QuizSerializer(many=True, read_only=True)
 
     class Meta:
         model = Lesson
-        fields = ['id', 'title', 'description', 'contents', 'thumbnail_base64']
+        fields = [
+            'id',
+            'language',
+            'content_type',
+            'title',
+            'description',
+            'thumbnail',
+            'thumbnail_base64',
+            'level',
+            'order',
+            'contents',     # 👈 Үүнийг заавал нэмэх ёстой!
+            'quizzes'
+        ]
 
     def get_thumbnail_base64(self, obj):
-        # Make sure this function gets the actual base64 image data
-        return obj.thumbnail_base64()  # Or however you get the base64 data
+        return obj.thumbnail_base64()
+
+
 
 class ContentTypeSerializer(serializers.ModelSerializer):
     lessons = LessonSerializer(many=True, read_only=True)  # Nested lessons in content type
@@ -96,26 +167,10 @@ class ContentTypeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ContentType
-        fields = ['id', 'name', 'description', 'language', 'language_name', 'lessons']
-
-
-class QuizChoiceSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = QuizChoice
-        fields = '__all__'
-
-class QuizSerializer(serializers.ModelSerializer):
-    choices = QuizChoiceSerializer(many=True, read_only=True)
-    audio_base64 = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Quiz
-        fields = '__all__'
-
-    def get_audio_base64(self, obj):
-        return obj.audio_base64()  # `audio_base64` method-ийг ашиглана
+        fields = ['id', 'name', 'description', 'language', 'language_name', 'lessons',]
 
 class UserProgressSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProgress
         fields = '__all__'
+

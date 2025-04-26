@@ -3,7 +3,7 @@ import 'package:lottie/lottie.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'profile.dart'; // Import your ProfilePage here
+import 'home.dart'; // Import your ProfilePage here
 import 'signup.dart'; // Import your Signup page here
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -67,7 +67,7 @@ class _LoginState extends State<Login> {
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => ProfilePage()),
+          MaterialPageRoute(builder: (context) => HomePage()),
         );
       } else {
         print('Failed with status code: ${response.statusCode}');
@@ -179,7 +179,7 @@ class _LoginState extends State<Login> {
                             // Navigate to sign up page
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => Signup()), // Add your Signup page here
+                              MaterialPageRoute(builder: (context) => HomePage()), // Add your Signup page here
                             );
                           },
                           child: Text("Register"),

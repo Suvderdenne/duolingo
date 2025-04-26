@@ -53,7 +53,7 @@ class startpage extends StatelessWidget {
               ),
               Spacer(),
               Text(
-                'Time to Create a Profile!',
+                '!',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,

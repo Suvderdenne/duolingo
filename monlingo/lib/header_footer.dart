@@ -17,6 +17,7 @@ class _FooterState extends State<Footer> {
     Icons.shop: false,
     Icons.home: false,
     Icons.timelapse: false,
+    Icons.leaderboard: false,
     Icons.more_horiz: false,
   };
 
@@ -24,20 +25,10 @@ class _FooterState extends State<Footer> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
-      color: Color.fromARGB(255, 81, 255, 148),
+      color: Colors.transparent, // Set the background to transparent
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildFooterButton(
-            context,
-            icon: Icons.person_outlined,
-            destination: ProfilePage(),
-          ),
-          _buildFooterButton(
-            context,
-            icon: Icons.shop,
-            destination: QuizPage(),
-          ),
+        children: [        
           _buildFooterButton(
             context,
             icon: Icons.home,
@@ -50,14 +41,8 @@ class _FooterState extends State<Footer> {
           ),
           _buildFooterButton(
             context,
-            icon: Icons.leaderboard,
-            destination: LeaderboardPG(languageCode: 'mn'), // 'mn' эсвэл тухайн хэрэглэгчийн хэл
-          ),
-
-          _buildFooterButton(
-            context,
-            icon: Icons.more_horiz,
-            destination: Login(),
+            icon: Icons.person_outlined,
+            destination: ProfilePage(),
           ),
         ],
       ),

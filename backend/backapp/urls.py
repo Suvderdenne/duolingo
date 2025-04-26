@@ -3,8 +3,7 @@ from rest_framework.routers import DefaultRouter
 from .views import (
     RegisterView, CustomLoginView,
     LanguageAPIView, LessonAPIView, 
-    LessonContentAPIView, QuizAPIView, 
-    QuizChoiceAPIView, UserProgressAPIView, ContentTypeListAPIView, ContentTypeWithLessonsAPIView
+    LessonContentAPIView, UserProgressAPIView, ContentTypeListAPIView, ContentTypeWithLessonsAPIView, QuizByContentTypeAPIView, QuizChoicesAPIView
 )
 
 
@@ -19,10 +18,11 @@ urlpatterns = [
     path('lesson-content/<int:lesson_id>/', LessonContentAPIView.as_view(), name='lesson_content_by_lesson_id'),
     path('content-types/<int:language_id>/', ContentTypeListAPIView.as_view(), name='content-type-list'),
     path('content-types/<int:lesson_id>/', ContentTypeListAPIView.as_view(), name='content-type-list'),
-    path('quizzes/', QuizAPIView.as_view(), name='quiz-list'),
-    path('quiz-choices/', QuizChoiceAPIView.as_view(), name='quiz-choice-list'),
     path('user-progress/', UserProgressAPIView.as_view(), name='user-progress-list'),
     path('content-types-with-lessons/<int:language_id>/', ContentTypeWithLessonsAPIView.as_view(), name='content-type-with-lessons'),
+
+    path('quiz-by-contenttype/<int:content_type_id>/', QuizByContentTypeAPIView.as_view(), name='quiz-by-contenttype'),
+    path('quiz-choices/<int:quiz_id>/', QuizChoicesAPIView.as_view(), name='quiz-choices'),
 ]
 
 
