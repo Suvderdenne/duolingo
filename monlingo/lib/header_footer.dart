@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:login_flutter/learn.dart';
 import 'duo.dart';
 import 'timelapse.dart';
 import 'login.dart';
@@ -24,27 +25,47 @@ class _FooterState extends State<Footer> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      padding: const EdgeInsets.symmetric(vertical: 0),
       color: Colors.transparent, // Set the background to transparent
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [        
-          _buildFooterButton(
-            context,
-            icon: Icons.home,
-            destination: HomePage(),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color.fromARGB(255, 207, 74, 207), // 1st color
+              Color.fromARGB(255, 88, 207, 207), // 2nd color
+              Color.fromARGB(255, 81, 255, 148), // 3rd color
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-          _buildFooterButton(
-            context,
-            icon: Icons.timelapse,
-            destination: Duolingo(),
-          ),
-          _buildFooterButton(
-            context,
-            icon: Icons.person_outlined,
-            destination: ProfilePage(),
-          ),
-        ],
+          borderRadius:
+              BorderRadius.circular(0), // Optional: for rounded corners
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _buildFooterButton(
+              context,
+              icon: Icons.home,
+              destination: HomePage(),
+            ),
+            _buildFooterButton(
+              context,
+              icon: Icons.timelapse,
+              destination: Duolingo(),
+            ),
+            _buildFooterButton(
+              context,
+              icon: Icons.person_outlined,
+              destination: ProfilePage(),
+            ),
+            _buildFooterButton(
+              context,
+              icon: Icons.leaderboard,
+              destination: SentenceLearningPage(),
+            ),
+          ],
+        ),
       ),
     );
   }

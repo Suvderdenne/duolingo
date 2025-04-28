@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'header_footer.dart';
-import 'login.dart'; // Assuming your login page file is named 'login.dart'
+import 'login.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -11,14 +11,14 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  String? username;
   String? email;
-  String? firstname;
-  String? lastname;
+  String? fullName;
+  int? score;
+  String? profilePicture;
   final imageUrl =
-      'https://img.freepik.com/premium-vector/man-avatar-profile-picture-vector-illustration_268834-538.jpg';
-final Color startColor = Colors.blue;
-  final Color endColor = Colors.green;
-  @override
+      'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.vecteezy.com%2Ffree-vector%2Fprofile-icon&psig=AOvVaw2sMKLjRQDDXBwnoi-hggGK&ust=1745910650734000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCPDlrJqW-owDFQAAAAAdAAAAABAE'; // Default placeholder image
+
   @override
   void initState() {
     super.initState();
@@ -28,8 +28,12 @@ final Color startColor = Colors.blue;
   _loadUserData() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
+      username = prefs.getString('username');
       email = prefs.getString('email');
-      firstname = prefs.getString('firstname');
+      fullName = prefs.getString('full_name');
+      score = prefs.getInt('score');
+      profilePicture = prefs.getString('profile_picture') ??
+          imageUrl; // Fallback to default image if null
     });
   }
 
@@ -38,8 +42,7 @@ final Color startColor = Colors.blue;
     await prefs.clear(); // Clear all saved data
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(
-          builder: (context) => Login()), // Navigate to login page
+      MaterialPageRoute(builder: (context) => Login()),
     );
   }
 
@@ -47,29 +50,35 @@ final Color startColor = Colors.blue;
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [startColor, endColor],
-              stops: [0.0, 1.0],
-            ),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.blue, Colors.green],
           ),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              height: 50,
-            ),
+            SizedBox(height: 50),
             Center(
               child: CircleAvatar(
                 radius: 100,
-                backgroundImage: Image.network(imageUrl).image,
+                backgroundColor: const Color.fromARGB(
+                    255, 99, 104, 109), // Set background color if needed
+                child: Icon(
+                  Icons.person, // Profile icon
+                  size: 80, // Icon size
+                  color: Colors.white, // Icon color
+                ),
               ),
             ),
             SizedBox(height: 10),
-            _buildTextWithShadow('Email:', email ?? ''),
-            _buildTextWithShadow('First Name:', firstname ?? ''),
+            _buildTextWithShadow('Username:', username ?? 'Not Available'),
+            _buildTextWithShadow('Email:', email ?? 'Not Available'),
+            _buildTextWithShadow('Full Name:', fullName ?? 'Not Available'),
+            _buildTextWithShadow(
+                'Score:', score?.toString() ?? 'Not Available'),
           ],
         ),
       ),
@@ -116,7 +125,7 @@ final Color startColor = Colors.blue;
             text,
             style: TextStyle(
               fontSize: 16.0,
-              color: Colors.blue,
+              color: const Color.fromARGB(255, 255, 255, 255),
             ),
           ),
         ],
