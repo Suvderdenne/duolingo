@@ -37,7 +37,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<List<Language>> fetchLanguages() async {
-    final response = await http.get(Uri.parse('http://127.0.0.1:8000/languages/'));
+    final response =
+        await http.get(Uri.parse('http://127.0.0.1:8000/languages/'));
 
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
@@ -52,17 +53,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: SafeArea(
         child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topRight,
-              end: Alignment.bottomLeft,
-              colors: [
-                Color.fromARGB(255, 207, 74, 207),
-                Color.fromARGB(255, 88, 207, 207),
-                Color.fromARGB(255, 81, 255, 148),
-              ],
-            ),
-          ),
+          color: Colors.white, // Changed from gradient to plain white
           child: ListView(
             children: [
               Padding(
@@ -106,7 +97,8 @@ class _HomePageState extends State<HomePage> {
                                     style: GoogleFonts.poppins(
                                       fontSize: 24,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.white,
+                                      color: const Color.fromARGB(
+                                          255, 143, 15, 202),
                                       shadows: [
                                         Shadow(
                                           blurRadius: 10.0,
@@ -127,11 +119,14 @@ class _HomePageState extends State<HomePage> {
                     FutureBuilder<List<Language>>(
                       future: languages,
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
                           return Center(child: CircularProgressIndicator());
                         } else if (snapshot.hasError) {
-                          return Center(child: Text('Error: ${snapshot.error}'));
-                        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                          return Center(
+                              child: Text('Error: ${snapshot.error}'));
+                        } else if (!snapshot.hasData ||
+                            snapshot.data!.isEmpty) {
                           return Center(child: Text('No languages found.'));
                         } else {
                           List<Language> languageList = snapshot.data!;
@@ -142,7 +137,8 @@ class _HomePageState extends State<HomePage> {
                               GridView.builder(
                                 shrinkWrap: true,
                                 physics: NeverScrollableScrollPhysics(),
-                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 2,
                                   crossAxisSpacing: 10,
                                   mainAxisSpacing: 10,
@@ -152,63 +148,42 @@ class _HomePageState extends State<HomePage> {
                                 itemBuilder: (context, index) {
                                   final language = languageList[index];
 
-                                  // null шалгах
-                                  if (language.code == null || language.code.isEmpty) {
-                                    return Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.transparent,
-                                        borderRadius: BorderRadius.circular(16),
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: [
-                                          ClipRRect(
-                                            borderRadius: BorderRadius.circular(12),
-                                            child: Image.memory(
-                                              base64Decode(language.flagBase64),
-                                              width: 120,
-                                              height: 80,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            language.name,
-                                            style: const TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }
-
                                   return GestureDetector(
                                     onTap: () {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) =>
-                                              LeaderboardPG(languageCode: language.code),
+                                          builder: (context) => LeaderboardPG(
+                                              languageCode: language.code),
                                         ),
                                       );
                                     },
                                     child: Container(
                                       decoration: BoxDecoration(
-                                        color: Colors.transparent,
+                                        color: Color.fromARGB(
+                                            255, 143, 15, 202), // Soft purple
                                         borderRadius: BorderRadius.circular(16),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black26,
+                                            blurRadius: 8,
+                                            offset: Offset(2, 4),
+                                          ),
+                                        ],
                                       ),
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
                                           ClipRRect(
-                                            borderRadius: BorderRadius.circular(12),
+                                            borderRadius:
+                                                BorderRadius.circular(12),
                                             child: Image.memory(
                                               base64Decode(language.flagBase64),
-                                              width: 120,
-                                              height: 80,
+                                              width: 100,
+                                              height: 70,
                                               fit: BoxFit.cover,
                                             ),
                                           ),

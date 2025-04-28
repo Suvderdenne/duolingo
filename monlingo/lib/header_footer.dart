@@ -23,48 +23,62 @@ class _FooterState extends State<Footer> {
   };
 
   @override
+  @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 0),
-      color: Colors.transparent, // Set the background to transparent
+      margin: EdgeInsets.all(10), // Optional: space around the footer
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+      decoration: BoxDecoration(
+        color: Colors.white, // Base color behind the gradient (if needed)
+        borderRadius: BorderRadius.circular(24), // Smooth rounded corners
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 12,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
       child: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Color.fromARGB(255, 207, 74, 207), // 1st color
-              Color.fromARGB(255, 88, 207, 207), // 2nd color
-              Color.fromARGB(255, 81, 255, 148), // 3rd color
+              Color.fromARGB(255, 143, 15, 202),
+              Color.fromARGB(255, 207, 74, 207),
+              Color.fromARGB(255, 143, 15, 202),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
-          borderRadius:
-              BorderRadius.circular(0), // Optional: for rounded corners
+          borderRadius: BorderRadius.circular(24),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _buildFooterButton(
-              context,
-              icon: Icons.home,
-              destination: HomePage(),
-            ),
-            _buildFooterButton(
-              context,
-              icon: Icons.timelapse,
-              destination: Duolingo(),
-            ),
-            _buildFooterButton(
-              context,
-              icon: Icons.person_outlined,
-              destination: ProfilePage(),
-            ),
-            _buildFooterButton(
-              context,
-              icon: Icons.leaderboard,
-              destination: SentenceLearningPage(),
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildFooterButton(
+                context,
+                icon: Icons.home,
+                destination: HomePage(),
+              ),
+              _buildFooterButton(
+                context,
+                icon: Icons.timelapse,
+                destination: Duolingo(),
+              ),
+              _buildFooterButton(
+                context,
+                icon: Icons.person_outlined,
+                destination: ProfilePage(),
+              ),
+              _buildFooterButton(
+                context,
+                icon: Icons.leaderboard,
+                destination: SentenceLearningPage(),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -6,7 +6,7 @@ import 'lesson_content_page.dart';
 import 'duo.dart'; // QuizPage-г import хийсэн байгаа
 
 class Duolingo extends StatefulWidget {
-  const Duolingo({super.key});
+  const Duolingo({super.key, required});
 
   @override
   _DuolingoState createState() => _DuolingoState();
@@ -23,10 +23,12 @@ class _DuolingoState extends State<Duolingo> {
   }
 
   Future<void> _fetchContentTypes() async {
-    final response = await http.get(Uri.parse('http://127.0.0.1:8000/content-types/2/'));
+    final response =
+        await http.get(Uri.parse('http://127.0.0.1:8000/content-types/2/'));
     if (response.statusCode == 200) {
       setState(() {
-        contentTypes = List<dynamic>.from(json.decode(utf8.decode(response.bodyBytes)));
+        contentTypes =
+            List<dynamic>.from(json.decode(utf8.decode(response.bodyBytes)));
       });
       _fetchLessonsForAllContentTypes();
     } else {
@@ -37,14 +39,17 @@ class _DuolingoState extends State<Duolingo> {
   Future<void> _fetchLessonsForAllContentTypes() async {
     for (var type in contentTypes) {
       final contentTypeId = type['id'];
-      final response = await http.get(Uri.parse('http://127.0.0.1:8000/lessons/$contentTypeId/'));
+      final response = await http
+          .get(Uri.parse('http://127.0.0.1:8000/lessons/$contentTypeId/'));
 
       if (response.statusCode == 200) {
         setState(() {
-          lessonsByType[contentTypeId] = List<dynamic>.from(json.decode(utf8.decode(response.bodyBytes)));
+          lessonsByType[contentTypeId] =
+              List<dynamic>.from(json.decode(utf8.decode(response.bodyBytes)));
         });
       } else {
-        throw Exception('Failed to load lessons for content type $contentTypeId');
+        throw Exception(
+            'Failed to load lessons for content type $contentTypeId');
       }
     }
   }
@@ -57,7 +62,7 @@ class _DuolingoState extends State<Duolingo> {
         title: Text(
           'Monlingo',
           style: GoogleFonts.poppins(
-            color: Colors.white,
+            color: Color.fromARGB(255, 143, 15, 202),
             fontSize: 24,
             fontWeight: FontWeight.w600,
           ),
@@ -72,8 +77,8 @@ class _DuolingoState extends State<Duolingo> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Colors.purpleAccent.shade100,
-                  Colors.blueAccent.shade100,
+                  Colors.white,
+                  Colors.white,
                   Colors.white,
                 ],
                 begin: Alignment.topCenter,
@@ -92,9 +97,10 @@ class _DuolingoState extends State<Duolingo> {
 
                     return Card(
                       elevation: 8,
-                      shadowColor: Colors.deepPurpleAccent.withOpacity(0.3),
+                      shadowColor: const Color.fromARGB(255, 90, 87, 97)
+                          .withOpacity(0.3),
                       margin: EdgeInsets.symmetric(vertical: 12),
-                      color: Colors.white.withOpacity(0.85),
+                      color: Color.fromARGB(255, 143, 15, 202),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
@@ -102,13 +108,15 @@ class _DuolingoState extends State<Duolingo> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           ListTile(
-                            leading: Icon(Icons.category, color: Colors.deepPurple, size: 32),
+                            leading: Icon(Icons.category,
+                                color: const Color.fromARGB(255, 211, 186, 255),
+                                size: 32),
                             title: Text(
                               type['name'],
                               style: GoogleFonts.poppins(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 20,
-                                color: Colors.black87,
+                                color: const Color.fromARGB(221, 255, 255, 255),
                               ),
                             ),
                             trailing: ElevatedButton(
@@ -116,18 +124,31 @@ class _DuolingoState extends State<Duolingo> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => QuizPage(contentTypeId: typeId),
+                                    builder: (context) =>
+                                        QuizPage(contentTypeId: typeId),
                                   ),
                                 );
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.deepPurple,
+                                backgroundColor: Colors.white,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 10),
+                                elevation: 5, // Add subtle shadow/elevation
+                              ).copyWith(
+                                shadowColor: MaterialStateProperty.all(
+                                  Color.fromARGB(
+                                      255, 143, 15, 202), // Custom shadow color
+                                ),
                               ),
-                              child: Text('Quiz', style: GoogleFonts.poppins(color: Colors.white)),
+                              child: Text(
+                                'Quiz',
+                                style: GoogleFonts.poppins(
+                                  color: Color.fromARGB(255, 143, 15, 202),
+                                ),
+                              ),
                             ),
                           ),
                           if (lessons != null && lessons.isNotEmpty)
@@ -143,13 +164,16 @@ class _DuolingoState extends State<Duolingo> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => LessonContentPage(lessonId: lesson['id']),
+                                          builder: (context) =>
+                                              LessonContentPage(
+                                                  lessonId: lesson['id']),
                                         ),
                                       );
                                     },
                                     child: AnimatedContainer(
                                       duration: Duration(milliseconds: 300),
-                                      margin: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                                      margin: EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 8),
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(16),
                                         boxShadow: [
@@ -166,7 +190,8 @@ class _DuolingoState extends State<Duolingo> {
                                         child: Stack(
                                           children: [
                                             Image.memory(
-                                              Base64Decoder().convert(lesson['thumbnail_base64']),
+                                              Base64Decoder().convert(
+                                                  lesson['thumbnail_base64']),
                                               width: 350,
                                               height: 180,
                                               fit: BoxFit.cover,
@@ -186,7 +211,8 @@ class _DuolingoState extends State<Duolingo> {
                                                     fontSize: 16,
                                                   ),
                                                   maxLines: 1,
-                                                  overflow: TextOverflow.ellipsis,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                 ),
                                               ),
                                             ),
@@ -204,7 +230,8 @@ class _DuolingoState extends State<Duolingo> {
                               child: Center(
                                 child: Text(
                                   'No lessons available for this category',
-                                  style: GoogleFonts.poppins(color: Colors.black87),
+                                  style: GoogleFonts.poppins(
+                                      color: Colors.black87),
                                 ),
                               ),
                             ),

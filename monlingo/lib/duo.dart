@@ -27,7 +27,8 @@ class _QuizPageState extends State<QuizPage> {
   Future<void> _fetchQuizQuestions() async {
     try {
       final response = await http.get(
-        Uri.parse('http://127.0.0.1:8000/quiz-by-contenttype/${widget.contentTypeId}/'),
+        Uri.parse(
+            'http://127.0.0.1:8000/quiz-by-contenttype/${widget.contentTypeId}/'),
       );
 
       if (response.statusCode == 200) {
@@ -62,23 +63,18 @@ class _QuizPageState extends State<QuizPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Асуулт бөглөх'),
-        backgroundColor: Colors.purpleAccent,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context); // ← Буцах товч дээр дархад буцаана
-          },
+        title: Text(
+          'Асуулт бөглөх',
+          style: TextStyle(color: Colors.white), // White text color
         ),
+        backgroundColor:
+            Color.fromARGB(255, 143, 15, 202), // Set background color
+        centerTitle: true, // Center the title
+        elevation: 4, // Subtle shadow under the AppBar
+        automaticallyImplyLeading: false, // Removes the default back button
       ),
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFFB2FEFA), Color(0xFF0ED2F7)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
+        color: Colors.white, // Set background color to white
         child: SafeArea(
           child: isLoading
               ? Center(child: CircularProgressIndicator())
@@ -97,7 +93,7 @@ class _QuizPageState extends State<QuizPage> {
                                 var question = quizQuestions[index];
                                 var choices = question['choices'] ?? [];
 
-                                choices.shuffle(); // Random-даж байгаа нь сайн
+                                choices.shuffle();
 
                                 return Card(
                                   shape: RoundedRectangleBorder(
@@ -105,35 +101,53 @@ class _QuizPageState extends State<QuizPage> {
                                   ),
                                   elevation: 8,
                                   margin: EdgeInsets.symmetric(vertical: 12),
+                                  color: Color.fromARGB(
+                                      255, 143, 15, 202), // Purple card color
                                   child: Padding(
                                     padding: EdgeInsets.all(16),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           'Асуулт ${index + 1}: ${question['question_text'] ?? ''}',
                                           style: TextStyle(
                                             fontSize: 20,
                                             fontWeight: FontWeight.bold,
+                                            color: Colors
+                                                .white, // White text for contrast
                                           ),
                                         ),
                                         SizedBox(height: 12),
                                         Column(
-                                          children: choices.map<Widget>((choice) {
+                                          children:
+                                              choices.map<Widget>((choice) {
                                             return Container(
-                                              margin: EdgeInsets.symmetric(vertical: 4),
+                                              margin: EdgeInsets.symmetric(
+                                                  vertical: 4),
                                               decoration: BoxDecoration(
                                                 color: Colors.white,
-                                                borderRadius: BorderRadius.circular(12),
-                                                border: Border.all(color: Colors.grey.shade300),
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                                border: Border.all(
+                                                    color:
+                                                        Colors.grey.shade300),
                                               ),
                                               child: RadioListTile<dynamic>(
-                                                title: Text(choice['text'] ?? ''),
+                                                title: Text(
+                                                  choice['text'] ?? '',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: Colors.black87,
+                                                  ),
+                                                ),
                                                 value: choice,
-                                                groupValue: selectedChoices[index],
+                                                groupValue:
+                                                    selectedChoices[index],
                                                 onChanged: (value) {
                                                   setState(() {
-                                                    selectedChoices[index] = value;
+                                                    selectedChoices[index] =
+                                                        value;
                                                   });
                                                 },
                                               ),
@@ -150,15 +164,21 @@ class _QuizPageState extends State<QuizPage> {
                             ElevatedButton(
                               onPressed: _goToResultPage,
                               style: ElevatedButton.styleFrom(
-                                padding: EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 40, vertical: 16),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(30),
                                 ),
-                                backgroundColor: Colors.purpleAccent,
+                                backgroundColor:
+                                    Colors.deepPurple, // Button color
+                                elevation: 4, // Subtle shadow
                               ),
                               child: Text(
                                 'Шалгах',
-                                style: TextStyle(fontSize: 20),
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.white, // Text color white
+                                ),
                               ),
                             ),
                           ],
