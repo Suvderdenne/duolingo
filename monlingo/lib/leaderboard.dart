@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'timelapse.dart'; // Duolingo хуудсыг import хийж байна
+import 'timelapse.dart'; // Duolingo хуудас
 
 class LeaderboardPG extends StatefulWidget {
   final String languageCode;
@@ -38,16 +38,23 @@ class _LeaderboardPGState extends State<LeaderboardPG> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Хэлний түвшин"),
-        backgroundColor: Colors.deepPurple,
+        title: Text(
+          'Хэлний түвшин',
+          style: TextStyle(color: Colors.white), // White text color
+        ),
+        backgroundColor:
+            Color.fromARGB(255, 143, 15, 202), // Set background color
+        centerTitle: true, // Center the title
+        elevation: 4, // Subtle shadow under the AppBar
+        automaticallyImplyLeading: false, // Removes the default back button
       ),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Color.fromARGB(255, 207, 74, 207),
-              Color.fromARGB(255, 88, 207, 207),
-              Color.fromARGB(255, 81, 255, 148),
+              Color.fromARGB(255, 255, 255, 255), // Light purple
+              Color.fromARGB(255, 206, 206, 206), // Medium purple
+              Color.fromARGB(255, 255, 255, 255), // Deep purple
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -60,45 +67,70 @@ class _LeaderboardPGState extends State<LeaderboardPG> {
                 future: contentTypes,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
+                    return const Center(
+                        child: CircularProgressIndicator(
+                            color: Colors.deepPurple));
                   } else if (snapshot.hasError) {
-                    return Center(child: Text('Алдаа: ${snapshot.error}'));
+                    return Center(
+                      child: Text(
+                        'Алдаа гарлаа: ${snapshot.error}',
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 16),
+                      ),
+                    );
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Center(child: Text('Контент олдсонгүй.'));
+                    return const Center(
+                      child: Text(
+                        'Контент олдсонгүй.',
+                        style: TextStyle(color: Colors.white, fontSize: 18),
+                      ),
+                    );
                   } else {
                     List<ContentType> contentList = snapshot.data!;
                     return ListView.builder(
                       itemCount: contentList.length,
                       itemBuilder: (context, index) {
                         ContentType content = contentList[index];
-                        return Card(
-                          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                          elevation: 3,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: ExpansionTile(
-                            leading: const Icon(Icons.language, size: 28, color: Colors.deepPurple),
-                            title: Text(
-                              content.name,
-                              style: const TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black87,
-                              ),
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
+                          child: Card(
+                            color: Colors.deepPurple[400],
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
                             ),
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Text(
-                                  content.description ?? 'Тайлбар алга байна.',
+                            elevation: 6,
+                            child: Theme(
+                              data: Theme.of(context).copyWith(
+                                dividerColor: Colors
+                                    .transparent, // Remove expansion divider
+                              ),
+                              child: ExpansionTile(
+                                leading: const Icon(Icons.language,
+                                    color: Colors.white, size: 28),
+                                title: Text(
+                                  content.name,
                                   style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w400,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
                                   ),
                                 ),
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Text(
+                                      content.description ??
+                                          'Тайлбар алга байна.',
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.white70,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
                         );
                       },
@@ -109,7 +141,7 @@ class _LeaderboardPGState extends State<LeaderboardPG> {
             ),
             const SizedBox(height: 10),
             Padding(
-              padding: const EdgeInsets.only(bottom: 16.0),
+              padding: const EdgeInsets.only(bottom: 20.0),
               child: ElevatedButton.icon(
                 onPressed: () {
                   Navigator.push(
@@ -118,16 +150,18 @@ class _LeaderboardPGState extends State<LeaderboardPG> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurple,
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                  backgroundColor: Colors.deepPurpleAccent,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 36, vertical: 14),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(24),
+                    borderRadius: BorderRadius.circular(30),
                   ),
+                  elevation: 8,
                 ),
-                icon: const Icon(Icons.school, color: Colors.white),
+                icon: const Icon(Icons.school, size: 28, color: Colors.white),
                 label: const Text(
                   'Хичээл үзэх',
-                  style: TextStyle(fontSize: 18, color: Colors.white),
+                  style: TextStyle(fontSize: 20, color: Colors.white),
                 ),
               ),
             ),

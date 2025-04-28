@@ -161,13 +161,14 @@ class _ContentTypeListPageState extends State<ContentTypeListPage> {
                   child: GestureDetector(
                     onTap: () {
                       Navigator.push(
-  context,
-  MaterialPageRoute(
-    builder: (context) => Duolingo(
-      categoryId: widget.contentTypeId, // ✅ Use categoryId
-    ),
-  ),
-);
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Duolingo(
+                            categoryId:
+                                widget.contentTypeId, // ✅ Use categoryId
+                          ),
+                        ),
+                      );
                     },
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 300),
