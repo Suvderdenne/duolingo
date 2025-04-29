@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -16,7 +17,7 @@ class _SentenceLearningPageState extends State<SentenceLearningPage> {
 
   // Translate function using Google Translate API
   Future<void> translateSentence(String sentence) async {
-    final apiKey = 'AIzaSyDGan9Ue6OTYfeMnyXz1qhoB68NPYuvgEk';
+    final apiKey = 'AIzaSyAxm_DqXsLMKvEfzk82oq6UqEwcjNHD2e8'; // Replace with your API key
     final url =
         'https://translation.googleapis.com/language/translate/v2?key=$apiKey';
 
@@ -54,9 +55,18 @@ class _SentenceLearningPageState extends State<SentenceLearningPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Sentence Learning'),
+    return Scaffold(appBar: AppBar(
+        title: Text(
+          'Shuffle the words/Үгсийг холих',
+          style: GoogleFonts.poppins(
+            color: Color.fromARGB(255, 143, 15, 202),
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -90,6 +100,7 @@ class _SentenceLearningPageState extends State<SentenceLearningPage> {
                   SizedBox(height: 16),
                   DragAndDropWords(
                     words: _shuffledWords,
+                    originalWords: _originalWords,
                     onRearranged: (rearrangedWords) {
                       setState(() {
                         _shuffledWords = rearrangedWords;
@@ -127,9 +138,14 @@ class _SentenceLearningPageState extends State<SentenceLearningPage> {
 
 class DragAndDropWords extends StatefulWidget {
   final List<String> words;
+  final List<String> originalWords;
   final Function(List<String>) onRearranged;
 
-  DragAndDropWords({required this.words, required this.onRearranged});
+  DragAndDropWords({
+    required this.words,
+    required this.originalWords,
+    required this.onRearranged,
+  });
 
   @override
   _DragAndDropWordsState createState() => _DragAndDropWordsState();
@@ -159,6 +175,9 @@ class _DragAndDropWordsState extends State<DragAndDropWords> {
       runSpacing: 8,
       children: List.generate(_words.length, (index) {
         final word = _words[index];
+        final isCorrect = widget.originalWords.length > index &&
+            word == widget.originalWords[index];
+
         return DragTarget<int>(
           onWillAccept: (fromIndex) => fromIndex != index,
           onAccept: (fromIndex) {
@@ -171,14 +190,26 @@ class _DragAndDropWordsState extends State<DragAndDropWords> {
                 color: Colors.transparent,
                 child: Chip(
                   label: Text(word),
-                  backgroundColor: Colors.blue.shade100,
+                  backgroundColor: isCorrect
+                      ? Colors.green.shade300
+                      : Colors.grey.shade300,
                 ),
               ),
               childWhenDragging: Opacity(
                 opacity: 0.3,
-                child: Chip(label: Text(word)),
+                child: Chip(
+                  label: Text(word),
+                  backgroundColor: isCorrect
+                      ? Colors.green.shade300
+                      : Colors.grey.shade300,
+                ),
               ),
-              child: Chip(label: Text(word)),
+              child: Chip(
+                label: Text(word),
+                backgroundColor: isCorrect
+                    ? Colors.green.shade300
+                    : Colors.grey.shade300,
+              ),
             );
           },
         );

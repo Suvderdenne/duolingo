@@ -54,25 +54,13 @@ class _ProfilePageState extends State<ProfilePage> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Colors.blue, Colors.green],
+            colors: [Colors.blue, const Color.fromARGB(255, 255, 255, 255)],
           ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 50),
-            Center(
-              child: CircleAvatar(
-                radius: 100,
-                backgroundColor: const Color.fromARGB(
-                    255, 99, 104, 109), // Set background color if needed
-                child: Icon(
-                  Icons.person, // Profile icon
-                  size: 80, // Icon size
-                  color: Colors.white, // Icon color
-                ),
-              ),
-            ),
             SizedBox(height: 10),
             _buildTextWithShadow('Username:', username ?? 'Not Available'),
             _buildTextWithShadow('Email:', email ?? 'Not Available'),
@@ -100,36 +88,43 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildTextWithShadow(String label, String text) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8.0),
-        border: Border(
-          bottom: BorderSide(width: 3, color: Colors.white),
+  return Container(
+    width: double.infinity, // Take full width
+    margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+    padding: EdgeInsets.all(16.0),
+    decoration: BoxDecoration(
+      color: Colors.white.withOpacity(0.8),
+      borderRadius: BorderRadius.circular(12.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.1),
+          blurRadius: 8,
+          offset: Offset(0, 4),
         ),
-      ),
-      padding: EdgeInsets.all(12.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 18.0,
-              fontWeight: FontWeight.bold,
-            ),
+      ],
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 18.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
           ),
-          SizedBox(
-            width: MediaQuery.of(context).size.width,
+        ),
+        SizedBox(height: 8.0),
+        Text(
+          text,
+          style: TextStyle(
+            fontSize: 16.0,
+            color: Colors.black54,
           ),
-          Text(
-            text,
-            style: TextStyle(
-              fontSize: 16.0,
-              color: const Color.fromARGB(255, 255, 255, 255),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
+
 }
