@@ -116,6 +116,7 @@ class _SentenceLearningPageState extends State<SentenceLearningPage> {
         child: SingleChildScrollView(
           child: Column(
             children: [
+              SizedBox(height: 56),
               if (!_isPlaying)
                 TextField(
                   controller: _controller,
