@@ -12,10 +12,14 @@ class _SentenceLearningPageState extends State<SentenceLearningPage> {
   TextEditingController _controller = TextEditingController();
   List<String> _shuffledWords = [];
   List<String> _originalWords = [];
-  bool _isTranslated = false;
-  String _errorMessage = "";
+  List<String> _previousSentences = [];
 
-  // Translate function using Google Translate API
+  bool _isTranslated = false;
+  bool _isPlaying = false;
+  bool _isCompleted = false;
+  String _errorMessage = "";
+  String _originalSentence = "";
+
   Future<void> translateSentence(String sentence) async {
     final apiKey = 'AIzaSyAxm_DqXsLMKvEfzk82oq6UqEwcjNHD2e8'; // Replace with your API key
     final url =
@@ -34,11 +38,15 @@ class _SentenceLearningPageState extends State<SentenceLearningPage> {
       final data = json.decode(response.body);
       final translatedText = data['data']['translations'][0]['translatedText'];
       setState(() {
+        _originalSentence = sentence.trim();
         _originalWords = translatedText.split(' ');
-        _shuffledWords = List.from(_originalWords);
-        _shuffledWords.shuffle();
+        _shuffledWords = List.from(_originalWords)..shuffle();
         _isTranslated = true;
+        _isPlaying = true;
+        _isCompleted = false;
         _errorMessage = "";
+        _previousSentences.add(sentence.trim());
+        _controller.clear();
       });
     } else {
       setState(() {
@@ -48,14 +56,49 @@ class _SentenceLearningPageState extends State<SentenceLearningPage> {
     }
   }
 
-  // Check if the sentence is in correct order
   bool checkAnswer() {
     return _shuffledWords.join(' ') == _originalWords.join(' ');
   }
 
+  Widget _buildWordTranslationList() {
+    final sourceWords = _originalSentence.split(' ');
+    final translatedWords = _originalWords;
+
+    int maxLen = sourceWords.length < translatedWords.length
+        ? sourceWords.length
+        : translatedWords.length;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: List.generate(maxLen, (i) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  sourceWords[i],
+                  style: TextStyle(fontWeight: FontWeight.w500),
+                ),
+              ),
+              Icon(Icons.arrow_forward, size: 18),
+              Expanded(
+                child: Text(
+                  translatedWords[i],
+                  style: TextStyle(color: Colors.deepPurple),
+                ),
+              ),
+            ],
+          ),
+        );
+      }),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(
+    return Scaffold(
+      appBar: AppBar(
         title: Text(
           'Shuffle the words/Үгсийг холих',
           style: GoogleFonts.poppins(
@@ -70,66 +113,113 @@ class _SentenceLearningPageState extends State<SentenceLearningPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: _controller,
-              decoration: InputDecoration(
-                labelText: 'Enter a sentence in any language',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                final sentence = _controller.text.trim();
-                if (sentence.isNotEmpty) {
-                  translateSentence(sentence);
-                }
-              },
-              child: Text('Translate'),
-            ),
-            SizedBox(height: 16),
-            if (_isTranslated)
-              Column(
-                children: [
-                  Text(
-                    'Rearrange the words:',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              if (!_isPlaying)
+                TextField(
+                  controller: _controller,
+                  decoration: InputDecoration(
+                    labelText: 'Enter a sentence in any language',
+                    border: OutlineInputBorder(),
                   ),
-                  SizedBox(height: 16),
-                  DragAndDropWords(
-                    words: _shuffledWords,
-                    originalWords: _originalWords,
-                    onRearranged: (rearrangedWords) {
-                      setState(() {
-                        _shuffledWords = rearrangedWords;
-                      });
-                    },
-                  ),
-                  SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {
-                      if (checkAnswer()) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Correct!')),
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Try again!')),
-                        );
-                      }
-                    },
-                    child: Text('Check Answer'),
-                  ),
-                ],
-              )
-            else if (_errorMessage.isNotEmpty)
-              Text(
-                _errorMessage,
-                style: TextStyle(color: Colors.red),
-              ),
-          ],
+                ),
+              SizedBox(height: 16),
+              if (!_isPlaying)
+                ElevatedButton(
+                  onPressed: () {
+                    final sentence = _controller.text.trim();
+                    if (sentence.isNotEmpty) {
+                      translateSentence(sentence);
+                    }
+                  },
+                  child: Text('Translate'),
+                ),
+              SizedBox(height: 16),
+              if (_isTranslated)
+                Column(
+                  children: [
+                    Text(
+                      'Rearrange the words:',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 16),
+                    DragAndDropWords(
+                      words: _shuffledWords,
+                      originalWords: _originalWords,
+                      onRearranged: (rearrangedWords) {
+                        setState(() {
+                          _shuffledWords = rearrangedWords;
+                        });
+                      },
+                    ),
+                    SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (checkAnswer()) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Correct!')),
+                          );
+                          setState(() {
+                            _isCompleted = true;
+                          });
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Try again!')),
+                          );
+                        }
+                      },
+                      child: Text('Check Answer'),
+                    ),
+                    if (_isCompleted) ...[
+                      SizedBox(height: 20),
+                      Text(
+                        'Word Translations:',
+                        style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 8),
+                      _buildWordTranslationList(),
+                      SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            _isPlaying = false;
+                            _isTranslated = false;
+                            _shuffledWords.clear();
+                            _originalWords.clear();
+                            _originalSentence = '';
+                          });
+                        },
+                        child: Text('Next Sentence'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.teal,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              if (_errorMessage.isNotEmpty)
+                Text(
+                  _errorMessage,
+                  style: TextStyle(color: Colors.red),
+                ),
+              if (_previousSentences.isNotEmpty) ...[
+                SizedBox(height: 24),
+                Text(
+                  'Previous Sentences:',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                SizedBox(height: 8),
+                ..._previousSentences
+                    .map((s) => Text("• $s", style: TextStyle(fontSize: 14)))
+                    .toList(),
+              ],
+            ],
+          ),
         ),
       ),
     );
@@ -220,6 +310,7 @@ class _DragAndDropWordsState extends State<DragAndDropWords> {
 
 void main() {
   runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
     home: SentenceLearningPage(),
   ));
 }
