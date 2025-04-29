@@ -18,7 +18,6 @@ class _SentenceLearningPageState extends State<SentenceLearningPage> {
   bool _isPlaying = false;
   bool _isCompleted = false;
   String _errorMessage = "";
-  String _originalSentence = "";
   String _detectedLanguageCode = "";
 
   Future<void> translateSentence(String sentence) async {
@@ -42,7 +41,6 @@ class _SentenceLearningPageState extends State<SentenceLearningPage> {
           data['data']['translations'][0]['detectedSourceLanguage'];
 
       setState(() {
-        _originalSentence = sentence.trim();
         _originalWords = translatedText.split(' ');
         _shuffledWords = List.from(_originalWords)..shuffle();
         _isTranslated = true;
@@ -90,13 +88,13 @@ class _SentenceLearningPageState extends State<SentenceLearningPage> {
         title: Text(
           'Shuffle the words/Үгсийг холих',
           style: GoogleFonts.poppins(
-            color: Color.fromARGB(255, 143, 15, 202),
+            color: Color.fromARGB(255, 255, 255, 255),
             fontSize: 24,
             fontWeight: FontWeight.w600,
           ),
         ),
         centerTitle: true,
-        backgroundColor: Colors.transparent,
+        backgroundColor:  Color.fromARGB(255, 143, 15, 202),
         elevation: 0,
       ),
       body: Padding(
@@ -113,7 +111,7 @@ class _SentenceLearningPageState extends State<SentenceLearningPage> {
                     border: OutlineInputBorder(),
                   ),
                 ),
-              SizedBox(height: 16),
+              SizedBox(height: 56),
               if (!_isPlaying)
                 ElevatedButton(
                   onPressed: () {
@@ -180,7 +178,6 @@ class _SentenceLearningPageState extends State<SentenceLearningPage> {
                             _isTranslated = false;
                             _shuffledWords.clear();
                             _originalWords.clear();
-                            _originalSentence = '';
                           });
                         },
                         child: Text('Next Sentence'),
