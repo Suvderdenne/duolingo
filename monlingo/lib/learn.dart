@@ -19,6 +19,7 @@ class _SentenceLearningPageState extends State<SentenceLearningPage> {
   bool _isCompleted = false;
   String _errorMessage = "";
   String _originalSentence = "";
+  String _detectedLanguageCode = "";
 
   Future<void> translateSentence(String sentence) async {
     final apiKey = 'AIzaSyAxm_DqXsLMKvEfzk82oq6UqEwcjNHD2e8'; // Replace with your API key
@@ -37,6 +38,9 @@ class _SentenceLearningPageState extends State<SentenceLearningPage> {
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       final translatedText = data['data']['translations'][0]['translatedText'];
+      final detectedLanguage =
+          data['data']['translations'][0]['detectedSourceLanguage'];
+
       setState(() {
         _originalSentence = sentence.trim();
         _originalWords = translatedText.split(' ');
@@ -45,6 +49,7 @@ class _SentenceLearningPageState extends State<SentenceLearningPage> {
         _isPlaying = true;
         _isCompleted = false;
         _errorMessage = "";
+        _detectedLanguageCode = detectedLanguage;
         _previousSentences.add(sentence.trim());
         _controller.clear();
       });
@@ -54,6 +59,23 @@ class _SentenceLearningPageState extends State<SentenceLearningPage> {
         _errorMessage = "Error translating sentence.";
       });
     }
+  }
+
+  String getLanguageName(String code) {
+    const languageMap = {
+      'en': 'English',
+      'mn': 'Mongolian',
+      'es': 'Spanish',
+      'fr': 'French',
+      'de': 'German',
+      'zh': 'Chinese',
+      'ru': 'Russian',
+      'ja': 'Japanese',
+      'ko': 'Korean',
+      // Add more as needed
+    };
+
+    return languageMap[code] ?? code;
   }
 
   bool checkAnswer() {
@@ -139,10 +161,21 @@ class _SentenceLearningPageState extends State<SentenceLearningPage> {
               SizedBox(height: 16),
               if (_isTranslated)
                 Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
+                      'Detected Language: ${getLanguageName(_detectedLanguageCode)}',
+                      style: TextStyle(
+                        fontStyle: FontStyle.italic,
+                        color: Colors.deepPurple,
+                        fontSize: 16,
+                      ),
+                    ),
+                    SizedBox(height: 12),
+                    Text(
                       'Rearrange the words:',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: 16),
                     DragAndDropWords(
@@ -173,13 +206,6 @@ class _SentenceLearningPageState extends State<SentenceLearningPage> {
                       child: Text('Check Answer'),
                     ),
                     if (_isCompleted) ...[
-                      SizedBox(height: 20),
-                      Text(
-                        'Word Translations:',
-                        style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(height: 8),
-                      _buildWordTranslationList(),
                       SizedBox(height: 20),
                       ElevatedButton(
                         onPressed: () {
