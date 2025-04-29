@@ -82,40 +82,6 @@ class _SentenceLearningPageState extends State<SentenceLearningPage> {
     return _shuffledWords.join(' ') == _originalWords.join(' ');
   }
 
-  Widget _buildWordTranslationList() {
-    final sourceWords = _originalSentence.split(' ');
-    final translatedWords = _originalWords;
-
-    int maxLen = sourceWords.length < translatedWords.length
-        ? sourceWords.length
-        : translatedWords.length;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: List.generate(maxLen, (i) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4),
-          child: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  sourceWords[i],
-                  style: TextStyle(fontWeight: FontWeight.w500),
-                ),
-              ),
-              Icon(Icons.arrow_forward, size: 18),
-              Expanded(
-                child: Text(
-                  translatedWords[i],
-                  style: TextStyle(color: Colors.deepPurple),
-                ),
-              ),
-            ],
-          ),
-        );
-      }),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
