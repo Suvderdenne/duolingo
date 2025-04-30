@@ -53,9 +53,9 @@ class _IntroScreensState extends State<IntroScreens> {
                         padding: const EdgeInsets.all(20.0),
                         child: Lottie.asset(
                           lottieFiles[index],
-                          fit: BoxFit.contain, 
-                          width: MediaQuery.of(context).size.width * 0.8, 
-                          //height: MediaQuery.of(context).size.height * 0.5, 
+                          fit: BoxFit.contain,
+                          width: MediaQuery.of(context).size.width * 0.8,
+                          //height: MediaQuery.of(context).size.height * 0.5,
                         ),
                       ),
                     ),
@@ -84,7 +84,7 @@ class _IntroScreensState extends State<IntroScreens> {
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => MyApp()), 
+                  MaterialPageRoute(builder: (context) => MyApp()),
                 );
               },
               child: Text(
@@ -118,7 +118,8 @@ class _IntroScreensState extends State<IntroScreens> {
                       height: 10.0,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: _currentIndex == index ? Colors.white : Colors.grey,
+                        color:
+                            _currentIndex == index ? Colors.white : Colors.grey,
                       ),
                     );
                   }),
@@ -133,7 +134,9 @@ class _IntroScreensState extends State<IntroScreens> {
                     } else {
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => MyApp()), // Replace with your main app widget
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                MyApp()), // Replace with your main app widget
                       );
                     }
                   },
@@ -147,9 +150,8 @@ class _IntroScreensState extends State<IntroScreens> {
   }
 }
 
-
 void main() {
   runApp(MaterialApp(
-    home: IntroScreens(), 
+    home: IntroScreens(),
   ));
 }

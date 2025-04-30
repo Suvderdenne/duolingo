@@ -32,7 +32,7 @@ class startpage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              SizedBox(height: 20),
+              Spacer(flex: 2), // Зургийг доошлуулж байна
               Container(
                 width: 200,
                 height: 200,
@@ -46,31 +46,22 @@ class startpage extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(20),
                   child: Image.asset(
-                    "../assets/home/logo.png",
+                    "home/logo.png", // Зураг замыг зассан
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
-              Spacer(),
-              Text(
-                '!',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white, // Changed text color to white
-                ),
-                textAlign: TextAlign.center,
-              ),
+              SizedBox(height: 10),
               SizedBox(height: 20),
               Text(
-                'Create a profile to save your progress and continue learning for free.',
+                'Сайн уу! Та цааш үргэлжлүүлэхийн тулд нэвтрэх хэрэгтэй!',
                 style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white, // Changed text color to white
+                  fontSize: 20,
+                  color: Colors.white,
                 ),
                 textAlign: TextAlign.center,
               ),
-              Spacer(flex: 2),
+              Spacer(flex: 3),
               Column(
                 children: [
                   ElevatedButton(
@@ -92,7 +83,7 @@ class startpage extends StatelessWidget {
                         );
                       },
                       child: Text(
-                        'Create Profile',
+                        'БҮРТГҮҮЛЭХ',
                         style: TextStyle(
                           color: Colors.white,
                         ),
@@ -113,10 +104,13 @@ class startpage extends StatelessWidget {
                           MaterialPageRoute(builder: (context) => Login()),
                         );
                       },
-                      child: Text('Already have an account?'),
+                      child: Text(
+                        'НЭВТРЭХ',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
                       style: TextButton.styleFrom(
-                        shadowColor:
-                            Colors.white, // Changed text color to white
                         padding: EdgeInsets.symmetric(vertical: 16),
                       ),
                     ),

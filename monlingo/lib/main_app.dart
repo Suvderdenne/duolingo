@@ -5,7 +5,7 @@ import 'package:login_flutter/IntroScreens.dart';
 //import 'CreateAccount.dart';
 
 class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+  const MainApp({super.key, required bool debugShowCheckedModeBanner});
 
   @override
   Widget build(BuildContext context) {
