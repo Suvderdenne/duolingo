@@ -69,13 +69,13 @@ class _FooterState extends State<Footer> {
               ),
               _buildFooterButton(
                 context,
-                icon: Icons.person_outlined,
-                destination: ProfilePage(),
+                icon: Icons.leaderboard,
+                destination: SentenceLearningPage(),
               ),
               _buildFooterButton(
                 context,
-                icon: Icons.leaderboard,
-                destination: SentenceLearningPage(),
+                icon: Icons.person_outlined,
+                destination: ProfilePage(),
               ),
             ],
           ),

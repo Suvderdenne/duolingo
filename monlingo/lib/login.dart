@@ -110,7 +110,7 @@ class _LoginState extends State<Login> {
               Lottie.asset("register.json",
                   width: 200), // Adjust asset path if needed
               Text(
-                "Login",
+                "НЭВТРЭХ",
                 style: Theme.of(context).textTheme.headlineLarge,
               ),
               const SizedBox(height: 35),
@@ -118,7 +118,7 @@ class _LoginState extends State<Login> {
                 controller: emailController,
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
-                  labelText: "Username",
+                  labelText: "Нэвтрэх нэр",
                   prefixIcon: const Icon(Icons.email_outlined),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -140,7 +140,7 @@ class _LoginState extends State<Login> {
                 keyboardType: TextInputType.visiblePassword,
                 obscureText: _obscurePassword,
                 decoration: InputDecoration(
-                  labelText: "Password",
+                  labelText: "Нууц үг",
                   prefixIcon: const Icon(Icons.password_outlined),
                   suffixIcon: IconButton(
                     onPressed: () {
@@ -174,7 +174,7 @@ class _LoginState extends State<Login> {
                       children: [
                         ElevatedButton(
                           onPressed: sendJson,
-                          child: Text('Login'),
+                          child: Text('НЭВТРЭХ'),
                         ),
                         const SizedBox(height: 30),
                         TextButton(
@@ -187,7 +187,7 @@ class _LoginState extends State<Login> {
                                       Signup()), // Add your Signup page here
                             );
                           },
-                          child: Text("Register"),
+                          child: Text("БҮРТГҮҮЛЭХ"),
                         ),
                       ],
                     ),

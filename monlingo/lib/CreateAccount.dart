@@ -64,15 +64,6 @@ class startpage extends StatelessWidget {
               Spacer(flex: 3),
               Column(
                 children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => HomePage()),
-                      );
-                    },
-                    child: Text("Home"),
-                  ),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(

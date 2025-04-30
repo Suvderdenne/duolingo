@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:login_flutter/CreateAccount.dart';
-
 import 'main_app.dart';
-import 'package:login_flutter/IntroScreens.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await _initHive();
-  runApp(const MainApp(debugShowCheckedModeBanner: false));
+  runApp(const MainApp());
 }
 
 Future<void> _initHive() async {
