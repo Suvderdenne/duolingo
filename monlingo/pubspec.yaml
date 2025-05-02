@@ -30,9 +30,11 @@ dev_dependencies:
 
 flutter:
   assets:
-    - assets/logo.png
+    - assets/home/logo.png
     - assets/banner.webp
     - assets/Intro/start.json
     - assets/Intro/start2.json
     - assets/Intro/start3.json
+    - assets/
+    - assets/register.json
   uses-material-design: true

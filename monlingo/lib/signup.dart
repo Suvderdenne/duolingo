@@ -15,7 +15,8 @@ class _SignupState extends State<Signup> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController repeatPasswordController = TextEditingController();
+  final TextEditingController repeatPasswordController =
+      TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   bool _obscurePassword = true;
@@ -30,7 +31,8 @@ class _SignupState extends State<Signup> {
       'username': usernameController.text.trim(),
       'email': emailController.text.trim(),
       'password': passwordController.text,
-      'full_name': usernameController.text.trim(), // Optional: add separate controller for full name
+      'full_name': usernameController.text
+          .trim(), // Optional: add separate controller for full name
     };
 
     try {
@@ -42,18 +44,23 @@ class _SignupState extends State<Signup> {
 
       if (response.statusCode == 201) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Амжилттай бүртгэгдлээ!'), backgroundColor: Colors.green),
+          SnackBar(
+              content: Text('Амжилттай бүртгэгдлээ!'),
+              backgroundColor: Colors.green),
         );
         Navigator.pop(context); // Дахин Login хуудас руу буцах
       } else {
         final responseData = jsonDecode(response.body);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Алдаа: ${responseData.toString()}'), backgroundColor: Colors.red),
+          SnackBar(
+              content: Text('Алдаа: ${responseData.toString()}'),
+              backgroundColor: Colors.red),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Сүлжээний алдаа: $e'), backgroundColor: Colors.red),
+        SnackBar(
+            content: Text('Сүлжээний алдаа: $e'), backgroundColor: Colors.red),
       );
     }
   }
@@ -69,10 +76,19 @@ class _SignupState extends State<Signup> {
           child: Column(
             children: [
               const SizedBox(height: 80),
-              Lottie.asset("register.json", width: 200), // Replace with actual asset path
-              Text("Бүртгүүлэх", style: Theme.of(context).textTheme.headlineLarge?.copyWith(fontWeight: FontWeight.bold)),
+              Lottie.asset("assets/register.json",
+                  width: 200), // Replace with actual asset path
+              Text("Бүртгүүлэх",
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineLarge
+                      ?.copyWith(fontWeight: FontWeight.bold)),
               const SizedBox(height: 10),
-              Text("Шинэ бүртгэл үүсгэх", style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[600])),
+              Text("Шинэ бүртгэл үүсгэх",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(color: Colors.grey[600])),
               const SizedBox(height: 30),
 
               // Username
@@ -81,10 +97,12 @@ class _SignupState extends State<Signup> {
                 decoration: InputDecoration(
                   labelText: "Хэрэглэгчийн нэр",
                   prefixIcon: const Icon(Icons.person),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10)),
                 ),
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Хэрэглэгчийн нэр оруулна уу' : null,
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Хэрэглэгчийн нэр оруулна уу'
+                    : null,
               ),
               const SizedBox(height: 10),
 
@@ -94,10 +112,12 @@ class _SignupState extends State<Signup> {
                 decoration: InputDecoration(
                   labelText: "Имэйл",
                   prefixIcon: const Icon(Icons.email),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10)),
                 ),
-                validator: (value) =>
-                    value == null || !value.contains('@') ? 'Зөв имэйл хаяг оруулна уу' : null,
+                validator: (value) => value == null || !value.contains('@')
+                    ? 'Зөв имэйл хаяг оруулна уу'
+                    : null,
               ),
               const SizedBox(height: 10),
 
@@ -109,13 +129,18 @@ class _SignupState extends State<Signup> {
                   labelText: "Нууц үг",
                   prefixIcon: const Icon(Icons.lock),
                   suffixIcon: IconButton(
-                    icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
-                    onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                    icon: Icon(_obscurePassword
+                        ? Icons.visibility
+                        : Icons.visibility_off),
+                    onPressed: () =>
+                        setState(() => _obscurePassword = !_obscurePassword),
                   ),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10)),
                 ),
-                validator: (value) =>
-                    value == null || value.length < 6 ? 'Нууц үг хамгийн багадаа 6 тэмдэгт байх ёстой' : null,
+                validator: (value) => value == null || value.length < 6
+                    ? 'Нууц үг хамгийн багадаа 6 тэмдэгт байх ёстой'
+                    : null,
               ),
               const SizedBox(height: 10),
 
@@ -127,13 +152,18 @@ class _SignupState extends State<Signup> {
                   labelText: "Нууц үгээ давтана уу",
                   prefixIcon: const Icon(Icons.lock_outline),
                   suffixIcon: IconButton(
-                    icon: Icon(_obscureRepeatPassword ? Icons.visibility : Icons.visibility_off),
-                    onPressed: () => setState(() => _obscureRepeatPassword = !_obscureRepeatPassword),
+                    icon: Icon(_obscureRepeatPassword
+                        ? Icons.visibility
+                        : Icons.visibility_off),
+                    onPressed: () => setState(
+                        () => _obscureRepeatPassword = !_obscureRepeatPassword),
                   ),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10)),
                 ),
-                validator: (value) =>
-                    value != passwordController.text ? 'Нууц үг таарахгүй байна' : null,
+                validator: (value) => value != passwordController.text
+                    ? 'Нууц үг таарахгүй байна'
+                    : null,
               ),
 
               const SizedBox(height: 40),
@@ -142,8 +172,10 @@ class _SignupState extends State<Signup> {
                 child: const Text('Бүртгүүлэх', style: TextStyle(fontSize: 18)),
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 50),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                  backgroundColor: Colors.blueAccent, // Correct button background color
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  backgroundColor:
+                      Colors.blueAccent, // Correct button background color
                 ),
               ),
               const SizedBox(height: 15),

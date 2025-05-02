@@ -46,7 +46,7 @@ class startpage extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(20),
                   child: Image.asset(
-                    "home/logo.png", // Зураг замыг зассан
+                    "assets/home/logo.png", // Зураг замыг зассан
                     fit: BoxFit.cover,
                   ),
                 ),

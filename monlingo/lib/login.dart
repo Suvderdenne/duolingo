@@ -107,7 +107,7 @@ class _LoginState extends State<Login> {
           child: Column(
             children: [
               const SizedBox(height: 100),
-              Lottie.asset("register.json",
+              Lottie.asset("assets/register.json",
                   width: 200), // Adjust asset path if needed
               Text(
                 "НЭВТРЭХ",
